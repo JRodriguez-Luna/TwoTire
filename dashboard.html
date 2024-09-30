@@ -1,68 +1,195 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TwoTire</title>
-  <link rel="icon" href="images/favicon.ico">
-  <link rel="stylesheet" href="css/reset.css">
-  <link rel="stylesheet" href="css/dashboard-layout.css">
-  <link rel="stylesheet" href="css/styles.css">
-</head>
-<body>
-  <header>
-    <div class="container">
-      <div class="row">
-        <div class="heading-column mini-logo">
-          <img src="/images/Mini-logo-TT.png" alt="logo-tt.png">
-        </div>
-        <nav class="heading-column">
-          <a href="#">Home</a>
-          <a href="#">Workout</a>
-        </nav>
-      </div>
-    </div>
-  </header>
-
-  <main>
-    <!-- Main Logo -->
-    <div class="main-logo-container">
-      <div class="row">
-        <div class="column main-logo">
-          <img src="/images/Main-Logo-TwoTire.png" alt="Main-Logo-TwoTire.png">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TwoTire</title>
+    <link rel="icon" href="images/favicon.ico" />
+    <link rel="stylesheet" href="css/reset.css" />
+    <link rel="stylesheet" href="css/dashboard-layout.css" />
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <!-- Header Section -->
+    <header>
+      <div class="container">
+        <div class="row">
+          <div class="heading-column mini-logo">
+            <img src="/images/Mini-logo-TT.png" alt="TwoTire Mini Logo" />
+          </div>
+          <nav class="heading-column">
+            <a href="#">Home</a>
+            <a href="#">Workout</a>
+          </nav>
         </div>
       </div>
-    </div>
+    </header>
 
-    <!-- Body Section -->
-    <div class="container">
-      <div class="box-row">
-        <!-- Today Section -->
-        <div class="box-column">
-          <span>Today</span>
-          <button class="add-button">+</button>
+    <!-- Main Content Section -->
+    <main>
+      <!-- Main Logo -->
+      <section class="main-logo-container">
+        <div class="row">
+          <div class="column main-logo">
+            <img src="/images/Main-Logo-TwoTire.png" alt="TwoTire Main Logo" />
+          </div>
         </div>
+      </section>
 
-        <!-- Tomorrow Section -->
-        <div class="box-column">
-          <span>Tomorrow</span>
-          <button class="add-button">+</button>
+      <!-- Body Section with Boxes -->
+      <section class="container">
+        <div class="box-row">
+          <!-- Sections with buttons for Today, Tomorrow, Goals, and Events -->
+          <div class="box-column">
+            <span>Today</span>
+            <button class="add-button openTodayModal">+</button>
+          </div>
+          <div class="box-column">
+            <span>Tomorrow</span>
+            <button class="add-button">+</button>
+          </div>
+          <div class="box-column">
+            <span>Goals</span>
+            <button class="add-button">+</button>
+          </div>
+          <div class="box-column">
+            <span>Events</span>
+            <button class="add-button">+</button>
+          </div>
         </div>
+      </section>
 
-        <!-- Goals Section -->
-        <div class="box-column">
-          <span>Goals</span>
-          <button class="add-button">+</button>
+      <!-- Modal -->
+      <dialog>
+        <h2 class="modal-title">Monday August 26, 2024</h2>
+        <div class="modal-box">
+          <form>
+            <!-- Input and Selection Section -->
+            <div class="box-area">
+              <div class="input-group">
+                <!-- Title-->
+                <input
+                  type="text"
+                  id="title-entry"
+                  placeholder="Text Input Placeholder" />
+
+                <!-- Duration -->
+                <label for="duration">Duration</label>
+                <div class="time-input">
+                  <input type="number" id="hours" placeholder="hrs" min="0" />
+                  <span>:</span>
+                  <input
+                    type="number"
+                    id="minutes"
+                    placeholder="min"
+                    min="0"
+                    max="59" />
+                  <span>:</span>
+                  <input
+                    type="number"
+                    id="seconds"
+                    placeholder="sec"
+                    min="0"
+                    max="59" />
+                </div>
+
+                <!-- Intensity -->
+                <select id="select-input">
+                  <option value="1">-- Select --</option>
+                  <option value="interval">Interval</option>
+                  <option value="endurance">Endurance</option>
+                  <option value="easy-ride">Easy Ride</option>
+                </select>
+              </div>
+
+              <!-- Form Table Section -->
+              <div class="form-section">
+                <div class="form-table">
+                  <div class="form-header">
+                    <span>Goal</span>
+                    <input type="checkbox" />
+                    <span>Completed</span>
+                  </div>
+
+                  <!-- Duration -->
+                  <div class="form-row">
+                    <label>Duration</label>
+                    <input type="text" placeholder="h:m:s" />
+                    <input type="text" />
+                  </div>
+
+                  <!-- Distance -->
+                  <div class="form-row">
+                    <label>Distance</label>
+                    <input type="text" placeholder="mi" />
+                    <input type="text" />
+                  </div>
+
+                  <!-- Avg. Speed -->
+                  <div class="form-row">
+                    <label>Avg. Speed</label>
+                    <input type="text" placeholder="mph" />
+                    <input type="text" />
+                  </div>
+
+                  <!-- Avg. Power -->
+                  <div class="form-row">
+                    <label>Avg. Power</label>
+                    <input type="text" placeholder="watts" />
+                    <input type="text" />
+                  </div>
+
+                  <!-- Avg. Cadence -->
+                  <div class="form-row">
+                    <label>Avg. Cadence</label>
+                    <input type="text" placeholder="rpm" />
+                    <input type="text" />
+                  </div>
+
+                  <!-- Elevation Gain -->
+                  <div class="form-row">
+                    <label>Elevation Gain</label>
+                    <input type="text" placeholder="ft" />
+                    <input type="text" />
+                  </div>
+
+                  <!-- Avg. Heart Rate-->
+                  <div class="form-row">
+                    <label>Avg. Heart Rate</label>
+                    <input type="text" placeholder="bpm" />
+                    <input type="text" />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Power Zone Section -->
+              <div class="power-zone">
+                <div>
+                  <p>Power Zone</p>
+                  <p>Current FTP: 220</p>
+                  <!-- Add your color legend here (Zone 1, Zone 2, etc.) -->
+                </div>
+              </div>
+
+              <!-- Comment Section -->
+              <div class="comments">
+                <label for="comment">Comment</label>
+                <textarea id="comment" placeholder="Textarea"></textarea>
+              </div>
+            </div>
+
+            <!-- Modal Action Buttons -->
+            <div class="modal-actions">
+              <button class="cancel-modal">Cancel</button>
+              <button class="save-modal">Save</button>
+            </div>
+          </form>
         </div>
+      </dialog>
+    </main>
 
-        <!-- Events Section -->
-        <div class="box-column">
-          <span>Events</span>
-          <button class="add-button">+</button>
-        </div>
-      </div>
-
-    </div>
-  </main>
-</body>
+    <!-- JavaScript Files -->
+    <script src="js/data.js"></script>
+    <script src="js/main.js"></script>
+  </body>
 </html>
