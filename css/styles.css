@@ -94,9 +94,74 @@ select {
   border-radius: 10px;
 }
 
-/* Power Zone Section */
+/* ---------- MODAL STYLING - Power Zone ---------- */
+.power-zone-container {
+  margin-top: 20px;
+  text-align: center;
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.power-zone-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+#ftp-input {
+  width: 100px;
+  padding: 5px;
+  margin: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Flex Container for All Zones */
 .power-zone {
-  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Individual Zone Styles */
+.zone {
+  color: white;
+  padding: 10px;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 5px;
+}
+
+/* Define colors for each zone */
+.zone-1 {
+  background-color: #00B5E2;
+}
+
+.zone-2 {
+  background-color: #8DC63F;
+}
+
+.zone-3 {
+  background-color: #FFD700;
+}
+
+.zone-4 {
+  background-color: #F68B1F;
+}
+
+.zone-5 {
+  background-color: #EE1C25;
+}
+
+.zone-6 {
+  background-color: #662D91;
+}
+
+.zone-7 {
+  background-color: #8B0000;
 }
 
 /* Comment Section */
