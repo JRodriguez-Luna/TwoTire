@@ -4,13 +4,20 @@ const $zoneElements = document.querySelectorAll('.zone');
 const $openModal = document.querySelector('.openTodayModal');
 const $dismissModal = document.querySelector('.dismiss-modal');
 const $dialog = document.querySelector('dialog');
+// Date
+const $modalTitleDate = document.querySelector('.modal-title');
+if (!$modalTitleDate)
+    throw new Error('$modalTitleDate did not query!');
+const formatDate = () => {
+    const today = new Date();
+    return today.toDateString(); // Set current date
+};
 // Modal
 $openModal?.addEventListener('click', () => {
-    console.log('Button clicked!');
+    $modalTitleDate.textContent = formatDate();
     $dialog?.showModal();
 });
 $dismissModal?.addEventListener('click', () => {
-    console.log('Dialog dismissed!');
     $dialog?.close();
 });
 // FTP Calculation with arrow function

@@ -10,6 +10,33 @@ body {
   font-family: Roboto, sans-serif;
 }
 
+/* ---------- WORKOUT STYLING ---------- */
+
+.workout-entry {
+  width: 90%;
+  height: 50px;
+  background-color: #f0f0f0;
+  margin: 10px auto;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #333;
+  font-weight: bold;
+}
+
+.intensity {
+  background-color: #EE1C25;
+}
+
+.endurance {
+  background-color: #007BFF;
+}
+
+.easy-ride {
+  background-color: #28A745;
+}
+
 /* ---------- MODAL STYLING ---------- */
 
 dialog {
@@ -184,7 +211,7 @@ textarea {
   margin-top: 2rem;
 }
 
-button.cancel-modal {
+button.dismiss-modal {
   background-color: #f44336;
 }
 
@@ -207,4 +234,18 @@ button:focus {
 
 button:hover {
   opacity: 0.9;
+}
+
+/* ---------- MAP ---------- */
+
+#map {
+  width: 100%;
+  height: 400px;
+  position: relative;
+}
+
+.map-content {
+  width: 100%;
+  height: 400px;
+  margin-top: 20px;
 }
