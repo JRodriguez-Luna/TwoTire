@@ -1,12 +1,9 @@
 /* Universal Reset */
 * {
-  margin: 0;
-  padding: 0;
   box-sizing: border-box;
 }
 
-body,
-html {
+body, html {
   height: 100%;
 }
 
@@ -27,56 +24,42 @@ header {
 .row {
   display: flex;
   align-items: center;
-  justify-content: start;
+  justify-content: space-between;
 }
 
-/* Heading Column Layout */
 .heading-column {
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-start;
   width: 100%;
 }
 
-/* Default Column Layout */
-.column {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
+nav a {
+  color: white;
+  text-decoration: none;
+  margin-right: 15px;
 }
 
-/* Main Logo Container */
+/* Main Logo */
 .main-logo-container {
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-/* Link Spacing */
-.heading-column>a {
-  margin: 10px;
-}
-
-/* Image Styles */
 img {
   width: 100%;
   height: auto;
 }
 
-.mini-logo,
-.main-logo {
-  height: auto;
-  margin: 5px;
-}
-
 .mini-logo {
-  width: 205px;
+  width: 200px;
 }
 
 .main-logo {
   width: 500px;
 }
 
+/* Box Layout (for workout/event sections) */
 .box-row {
   display: flex;
   justify-content: space-around;
@@ -93,7 +76,7 @@ img {
 }
 
 .box-column span {
-  font-size: 24px;
+  font-size: 1.2rem;
   margin-bottom: 10px;
   display: block;
 }
@@ -103,7 +86,7 @@ img {
   color: #fff;
   border: none;
   padding: 10px 20px;
-  font-size: 16px;
+  font-size: 1rem;
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s;

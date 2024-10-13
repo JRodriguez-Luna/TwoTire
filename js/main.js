@@ -13,32 +13,32 @@ const formatDate = () => {
     return today.toDateString(); // Set current date
 };
 // Modal
-$openModal?.addEventListener('click', () => {
+const showModal = () => {
     $modalTitleDate.textContent = formatDate();
     $dialog?.showModal();
-});
-$dismissModal?.addEventListener('click', () => {
+};
+const closeModal = () => {
     $dialog?.close();
-});
-// FTP Calculation with arrow function
-$ftpInput.addEventListener('input', () => {
-    try {
-        const ftp = Number($ftpInput.value);
-        // is a valid number?
-        if (!isNaN(ftp) && ftp > 0) {
-            console.log(`FTP Value: ${ftp}`);
-            const zones = calculateZones(ftp); // min, max values
-            // Update the DOM elements with new zone values
-            $zoneElements.forEach((zone, index) => {
-                const { min, max } = zones[index];
-                zone.textContent = `Zone ${index + 1}: ${min} - ${max}`;
-            });
-        }
-        else {
-            throw new Error('Invalid Input. Please enter a valid number greater than zero.');
-        }
+};
+// ** FTP Calculation with arrow function **
+// Update the zones based on FTP value
+const updateZones = (zones) => {
+    $zoneElements.forEach((zone, index) => {
+        const { min, max } = zones[index];
+        zone.textContent = `Zone ${index + 1}: ${min} - ${max}`;
+    });
+};
+// Handle FTP input and calculate zones
+const handleFTPInput = () => {
+    const ftp = Number($ftpInput.value);
+    if (!isNaN(ftp) && ftp > 0) {
+        const zones = calculateZones(ftp);
+        updateZones(zones);
     }
-    catch (error) {
-        console.error(error.message);
+    else {
+        console.error('Invalid Input. Please enter a valid number greater than zero.');
     }
-});
+};
+$openModal?.addEventListener('click', showModal);
+$dismissModal?.addEventListener('click', closeModal);
+$ftpInput.addEventListener('input', handleFTPInput);
