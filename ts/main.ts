@@ -14,36 +14,48 @@ const formatDate = () => {
 }
 
 // Modal
-const showModal = (): void => {
+const initializeMap = () => {
+  const map = L.map('map').setView([34.0522, -118.2437], 13); // Default view for Los Angeles
+
+  // Add the CyclOSM tile layer
+  L.tileLayer('https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png', {
+    maxZoom: 20,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors & CyclOSM'
+  }).addTo(map);
+};
+
+// Call the function to initialize the map when the modal is opened
+$openModal?.addEventListener('click', () => {
   $modalTitleDate.textContent = formatDate();
   $dialog?.showModal();
-};
+  initializeMap(); 
+});
 
-const closeModal = (): void => {
+
+$dismissModal?.addEventListener('click', () => {
   $dialog?.close();
-};
+});
 
-// ** FTP Calculation with arrow function **
+// FTP Calculation with arrow function
+$ftpInput.addEventListener('input', () => {
+  try {
+    const ftp = Number($ftpInput.value);
 
-// Update the zones based on FTP value
-const updateZones = (zones: ZoneRange[]): void => {
-  $zoneElements.forEach((zone, index) => {
-    const { min, max} = zones[index];
-    zone.textContent = `Zone ${index + 1}: ${min} - ${max}`;
-  })
-};
+    // is a valid number?
+    if (!isNaN(ftp) && ftp > 0) {
+      console.log(`FTP Value: ${ftp}`);
+      const zones: ZoneRange[] = calculateZones(ftp); // min, max values
 
-// Handle FTP input and calculate zones
-const handleFTPInput = (): void => {
-  const ftp = Number($ftpInput.value);
-  if (!isNaN(ftp) && ftp > 0) {
-    const zones = calculateZones(ftp);
-    updateZones(zones);
-  } else {
-    console.error('Invalid Input. Please enter a valid number greater than zero.');
+      // Update the DOM elements with new zone values
+      $zoneElements.forEach((zone, index) => {
+        const { min, max } = zones[index];
+        zone.textContent = `Zone ${index + 1}: ${min} - ${max}`;
+      });
+
+    } else {
+      throw new Error('Invalid Input. Please enter a valid number greater than zero.');
+    }
+  } catch (error) {
+    console.error((error as Error).message);
   }
-};
-
-$openModal?.addEventListener('click', showModal);
-$dismissModal?.addEventListener('click', closeModal);
-$ftpInput.addEventListener('input', handleFTPInput);
+});
