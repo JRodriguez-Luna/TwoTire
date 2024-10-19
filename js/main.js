@@ -4,6 +4,65 @@ const $zoneElements = document.querySelectorAll('.zone');
 const $openModal = document.querySelector('.openTodayModal');
 const $dismissModal = document.querySelector('.dismiss-modal');
 const $dialog = document.querySelector('dialog');
+// workout elements
+const $saveWorkout = document.querySelector('#save-workout');
+const $title = document.querySelector('#title-entry');
+const $hours = document.querySelector('#hours');
+const $mins = document.querySelector('#minutes');
+const $secs = document.querySelector('#seconds');
+const $distance = document.querySelector('#distance');
+const $avgSpeed = document.querySelector('#avg-speed');
+const $avgCadence = document.querySelector('#avg-cadence');
+const $avgHR = document.querySelector('#avg-HR');
+const $elevGain = document.querySelector('#elevation-gain');
+const $comment = document.querySelector('#comment');
+// Check if valid
+if (!$saveWorkout)
+    throw new Error('$saveWorkout did not query!');
+if (!$title)
+    throw new Error('$title did not query!');
+if (!$hours)
+    throw new Error('$hours did not query!');
+if (!$mins)
+    throw new Error('$mins did not query!');
+if (!$secs)
+    throw new Error('$secs did not query!');
+if (!$distance)
+    throw new Error('$distance did not query!');
+if (!$avgSpeed)
+    throw new Error('$avgSpeed did not query!');
+if (!$avgCadence)
+    throw new Error('$avgCadence did not query!');
+if (!$avgHR)
+    throw new Error('$avgHR did not query!');
+if (!$elevGain)
+    throw new Error('$elevGain did not query!');
+if (!$comment)
+    throw new Error('$comment did not query!');
+// Save Workout
+const saveWorkout = () => {
+    const newWorkout = {
+        date: formatDate(),
+        title: $title.value,
+        duration: {
+            hrs: Number($hours.value) || 0,
+            mins: Number($mins) || 0,
+            secs: Number($secs) || 0
+        },
+        distance: Number($distance.value) || 0,
+        avgSpeed: Number($avgSpeed.value) || 0,
+        avgCadence: Number($avgCadence.value) || 0,
+        avgHR: Number($avgHR.value) || 0,
+        elevGain: Number($elevGain.value) || 0,
+        ftp: Number($ftpInput.value) || 220,
+        comment: $comment.value || '',
+    };
+    addWorkout(newWorkout);
+    formReset();
+    $dialog?.close();
+    // Check to see if workout saved
+    console.log('Workout saved:', newWorkout);
+};
 // Date
 const $modalTitleDate = document.querySelector('.modal-title');
 if (!$modalTitleDate)
@@ -13,25 +72,17 @@ const formatDate = () => {
     return today.toDateString(); // Set current date
 };
 // Modal
-const initializeMap = () => {
-    const map = L.map('map').setView([34.0522, -118.2437], 13); // Default view for Los Angeles
-    // Add the CyclOSM tile layer
-    L.tileLayer('https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png', {
-        maxZoom: 20,
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors & CyclOSM'
-    }).addTo(map);
-};
 // Call the function to initialize the map when the modal is opened
-$openModal?.addEventListener('click', () => {
+const openModal = () => {
     $modalTitleDate.textContent = formatDate();
     $dialog?.showModal();
-    initializeMap(); // Initialize map here when the modal is opened
-});
-$dismissModal?.addEventListener('click', () => {
+    initializeMap();
+};
+const closeModal = () => {
     $dialog?.close();
-});
+};
 // FTP Calculation with arrow function
-$ftpInput.addEventListener('input', () => {
+const ftpInput = () => {
     try {
         const ftp = Number($ftpInput.value);
         // is a valid number?
@@ -51,4 +102,19 @@ $ftpInput.addEventListener('input', () => {
     catch (error) {
         console.error(error.message);
     }
-});
+};
+const formReset = () => {
+    $title.value = '';
+    $hours.value = '';
+    $mins.value = '';
+    $secs.value = '';
+    $distance.value = '';
+    $avgSpeed.value = '';
+    $avgCadence.value = '';
+    $avgHR.value = '';
+    $elevGain.value = '';
+};
+$openModal?.addEventListener('click', openModal);
+$dismissModal?.addEventListener('click', closeModal);
+$ftpInput.addEventListener('input', ftpInput);
+$saveWorkout.addEventListener('click', saveWorkout);
