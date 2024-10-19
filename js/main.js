@@ -6,56 +6,31 @@ const $dismissModal = document.querySelector('.dismiss-modal');
 const $dialog = document.querySelector('dialog');
 // workout elements
 const $saveWorkout = document.querySelector('#save-workout');
-const $title = document.querySelector('#title-entry');
-const $hours = document.querySelector('#hours');
-const $mins = document.querySelector('#minutes');
-const $secs = document.querySelector('#seconds');
-const $distance = document.querySelector('#distance');
-const $avgSpeed = document.querySelector('#avg-speed');
-const $avgCadence = document.querySelector('#avg-cadence');
-const $avgHR = document.querySelector('#avg-HR');
-const $elevGain = document.querySelector('#elevation-gain');
-const $comment = document.querySelector('#comment');
+const $form = document.querySelector('#entry-form');
 // Check if valid
 if (!$saveWorkout)
     throw new Error('$saveWorkout did not query!');
-if (!$title)
-    throw new Error('$title did not query!');
-if (!$hours)
-    throw new Error('$hours did not query!');
-if (!$mins)
-    throw new Error('$mins did not query!');
-if (!$secs)
-    throw new Error('$secs did not query!');
-if (!$distance)
-    throw new Error('$distance did not query!');
-if (!$avgSpeed)
-    throw new Error('$avgSpeed did not query!');
-if (!$avgCadence)
-    throw new Error('$avgCadence did not query!');
-if (!$avgHR)
-    throw new Error('$avgHR did not query!');
-if (!$elevGain)
-    throw new Error('$elevGain did not query!');
-if (!$comment)
-    throw new Error('$comment did not query!');
+if (!$form)
+    throw new Error('$form did not query!');
 // Save Workout
-const saveWorkout = () => {
+const saveWorkout = (e) => {
+    e.preventDefault();
+    const data = new FormData($form);
     const newWorkout = {
         date: formatDate(),
-        title: $title.value,
+        title: String(data.get('title')),
         duration: {
-            hrs: Number($hours.value) || 0,
-            mins: Number($mins) || 0,
-            secs: Number($secs) || 0
+            hrs: Number(data.get('hours')) || 0,
+            mins: Number(data.get('minutes')) || 0,
+            secs: Number(data.get('seconds')) || 0
         },
-        distance: Number($distance.value) || 0,
-        avgSpeed: Number($avgSpeed.value) || 0,
-        avgCadence: Number($avgCadence.value) || 0,
-        avgHR: Number($avgHR.value) || 0,
-        elevGain: Number($elevGain.value) || 0,
-        ftp: Number($ftpInput.value) || 220,
-        comment: $comment.value || '',
+        distance: Number(data.get('distance')) || 0,
+        avgSpeed: Number(data.get('avg-speed')) || 0,
+        avgCadence: Number(data.get('avg-cadence')) || 0,
+        avgHR: Number(data.get('avg-HR')) || 0,
+        elevGain: Number(data.get('elevation-gain')) || 0,
+        ftp: Number(data.get('ftp-input')) || 220,
+        comment: String(data.get('comment')) || '',
     };
     addWorkout(newWorkout);
     formReset();
@@ -104,15 +79,7 @@ const ftpInput = () => {
     }
 };
 const formReset = () => {
-    $title.value = '';
-    $hours.value = '';
-    $mins.value = '';
-    $secs.value = '';
-    $distance.value = '';
-    $avgSpeed.value = '';
-    $avgCadence.value = '';
-    $avgHR.value = '';
-    $elevGain.value = '';
+    $form.reset();
 };
 $openModal?.addEventListener('click', openModal);
 $dismissModal?.addEventListener('click', closeModal);

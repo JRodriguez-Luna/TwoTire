@@ -71,13 +71,14 @@
       <dialog>
         <h2 class="modal-title"></h2>
         <div class="modal-box">
-          <form>
+          <form id="entry-form">
             <!-- Input and Selection Section -->
             <div class="box-area">
               <div class="input-group">
                 <!-- Title-->
                 <input
                   type="text"
+                  name="title"
                   id="title-entry"
                   placeholder="Workout Title"
                   required
@@ -86,10 +87,11 @@
                 <!-- Duration -->
                 <label for="duration">Duration</label>
                 <div class="time-input">
-                  <input type="number" id="hours" placeholder="hrs" min="0" />
+                  <input type="number" name="hours" id="hours" placeholder="hrs" min="0" />
                   <span>:</span>
                   <input
                     type="number"
+                    name="minutes"
                     id="minutes"
                     placeholder="min"
                     min="0"
@@ -97,6 +99,7 @@
                   <span>:</span>
                   <input
                     type="number"
+                    name="seconds"
                     id="seconds"
                     placeholder="sec"
                     min="0"
@@ -124,43 +127,43 @@
                   <!-- Distance -->
                   <div class="form-row">
                     <label>Distance</label>
-                    <input type="number" id="distance" placeholder="mi" />
-                    <input type="number" id="post-distance" placeholder="mi" />
+                    <input type="number" name="distance" id="distance" placeholder="mi" />
+                    <input type="number" name="post-distance" id="post-distance" placeholder="mi" />
                   </div>
 
                   <!-- Avg. Speed -->
                   <div class="form-row">
                     <label>Avg. Speed</label>
-                    <input type="number" id="avg-speed" placeholder="mph" />
-                    <input type="number" id="post-avg-speed" placeholder="mph" />
+                    <input type="number" name="avg-speed" id="avg-speed" placeholder="mph" />
+                    <input type="number" name="post-avg-speed" id="post-avg-speed" placeholder="mph" />
                   </div>
 
                   <!-- Avg. Power -->
                   <div class="form-row">
                     <label>Avg. Power</label>
-                    <input type="number" id="avg-power" placeholder="watts" />
-                    <input type="number" id="post-avg-power" placeholder="watts" />
+                    <input type="number" name="avg-power" id="avg-power" placeholder="watts" />
+                    <input type="number" name="post-avg-power" id="post-avg-power" placeholder="watts" />
                   </div>
 
                   <!-- Avg. Cadence -->
                   <div class="form-row">
                     <label>Avg. Cadence</label>
-                    <input type="number" id="avg-cadence" placeholder="rpm" />
-                    <input type="number" id="post-avg-cadence" placeholder="rpm" />
+                    <input type="number" name="post-avg-cadence" id="avg-cadence" placeholder="rpm" />
+                    <input type="number" name="post-avg-cadence" id="post-avg-cadence" placeholder="rpm" />
                   </div>
 
                   <!-- Avg. Heart Rate-->
                   <div class="form-row">
                     <label>Avg. Heart Rate</label>
-                    <input type="number" id="avg-HR" placeholder="bpm" />
-                    <input type="number" id="post-avg-HR" placeholder="bpm" />
+                    <input type="number" name="avg-HR" id="avg-HR" placeholder="bpm" />
+                    <input type="number" name="post-avg-HR" id="post-avg-HR" placeholder="bpm" />
                   </div>
 
                   <!-- Elevation Gain -->
                   <div class="form-row">
                     <label>Elevation Gain</label>
-                    <input type="number" id="elevation-gain" placeholder="ft" />
-                    <input type="number" id="post-elevation-gain" placeholder="ft" />
+                    <input type="number" name="elevation-gain" id="elevation-gain" placeholder="ft" />
+                    <input type="number" name="post-elevation-gain" id="post-elevation-gain" placeholder="ft" />
                   </div>
                 </div>
               </div>
@@ -169,7 +172,7 @@
               <div class="power-zone-container">
                 <p class="power-zone-title">Power Zone</p>
                 <label for="ftp-input">Current FTP:</label>
-                <input type="number" id="ftp-input" class="ftp-input" value="220" min="0" />
+                <input type="number" name="ftp-input" id="ftp-input" class="ftp-input" value="220" min="0" />
 
                 <div class="power-zone">
                   <div class="zone zone-1" >Zone 1: 0 - 121</div>
@@ -193,7 +196,7 @@
               <!-- Comment Section -->
               <div class="comments">
                 <label for="comment">Comment</label>
-                <textarea id="comment" placeholder="It was a..."></textarea>
+                <textarea name="comment" id="comment" placeholder="It was a..."></textarea>
               </div>
             </div>
 
