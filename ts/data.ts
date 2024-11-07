@@ -14,21 +14,12 @@ interface Workout {
     secs: number;
   };
   distance: number;
-  avgSpeed: number;
-  avgCadence: number;
-  avgHR: number;
-  elevGain: number;
   ftp: number;
   comment: string;
 }
 
 let workouts: Workout[] = [];
 
-/**
- * Calculate power zones based on the user's FTP (Functional Threshold Power)
- * @param ftp - The user's FTP value
- * @returns An array of ZoneRange objects representing power zones
- */
 const calculateZones = (ftp: number): ZoneRange[] => {
   return [
     { min: 0, max: Math.round(ftp * 0.55) }, // Zone 1: Recovery (0-55% FTP)
@@ -41,27 +32,16 @@ const calculateZones = (ftp: number): ZoneRange[] => {
   ];
 };
 
-/**
- * Writes the workouts array to localStorage
- */
 const writeWorkouts = (): void => {
   const workoutsJSON = JSON.stringify(workouts);
   localStorage.setItem('workout-storage', workoutsJSON); // Use 'workout-storage' for consistency
 };
 
-/**
- * Adds a new workout to the workouts array and writes to localStorage
- * @param workout - A Workout object to be added
- */
 const addWorkout = (workout: Workout): void => {
   workouts.push(workout);
   writeWorkouts();
 };
 
-/**
- * Retrieves workouts from localStorage
- * @returns An array of Workout objects or an empty array if none exist
- */
 const getWorkouts = (): Workout[] => {
   const workoutsJSON = localStorage.getItem('workout-storage'); // Matching the key used in writeWorkouts
   if (workoutsJSON) return JSON.parse(workoutsJSON);

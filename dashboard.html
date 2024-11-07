@@ -48,7 +48,7 @@
             <button class="add-button openTodayModal">+</button>
             <!-- Workout Entries -->
             <div class="new-entries-container">
-              <div class="workout-entry intensity">Unplanned Workout</div>
+              <div class="workout-entry">Unplanned Workout</div>
             </div>
 
           </div>
@@ -57,7 +57,7 @@
             <button class="add-button">+</button>
           </div>
           <div class="box-column">
-            <span>Goals</span>
+            <span>Weekly Goals(mi)</span>
             <button class="add-button">+</button>
           </div>
           <div class="box-column">
@@ -105,14 +105,6 @@
                     min="0"
                     max="59" />
                 </div>
-
-                <!-- Intensity -->
-                <select id="select-input" required>
-                  <option value="">Select Intensity</option>
-                  <option value="interval">Interval</option>
-                  <option value="endurance">Endurance</option>
-                  <option value="easy-ride">Easy Ride</option>
-                </select>
               </div>
 
               <!-- Form Table Section -->
@@ -129,41 +121,6 @@
                     <label>Distance</label>
                     <input type="number" name="distance" id="distance" placeholder="mi" />
                     <input type="number" name="post-distance" id="post-distance" placeholder="mi" />
-                  </div>
-
-                  <!-- Avg. Speed -->
-                  <div class="form-row">
-                    <label>Avg. Speed</label>
-                    <input type="number" name="avg-speed" id="avg-speed" placeholder="mph" />
-                    <input type="number" name="post-avg-speed" id="post-avg-speed" placeholder="mph" />
-                  </div>
-
-                  <!-- Avg. Power -->
-                  <div class="form-row">
-                    <label>Avg. Power</label>
-                    <input type="number" name="avg-power" id="avg-power" placeholder="watts" />
-                    <input type="number" name="post-avg-power" id="post-avg-power" placeholder="watts" />
-                  </div>
-
-                  <!-- Avg. Cadence -->
-                  <div class="form-row">
-                    <label>Avg. Cadence</label>
-                    <input type="number" name="post-avg-cadence" id="avg-cadence" placeholder="rpm" />
-                    <input type="number" name="post-avg-cadence" id="post-avg-cadence" placeholder="rpm" />
-                  </div>
-
-                  <!-- Avg. Heart Rate-->
-                  <div class="form-row">
-                    <label>Avg. Heart Rate</label>
-                    <input type="number" name="avg-HR" id="avg-HR" placeholder="bpm" />
-                    <input type="number" name="post-avg-HR" id="post-avg-HR" placeholder="bpm" />
-                  </div>
-
-                  <!-- Elevation Gain -->
-                  <div class="form-row">
-                    <label>Elevation Gain</label>
-                    <input type="number" name="elevation-gain" id="elevation-gain" placeholder="ft" />
-                    <input type="number" name="post-elevation-gain" id="post-elevation-gain" placeholder="ft" />
                   </div>
                 </div>
               </div>
@@ -182,14 +139,6 @@
                   <div class="zone zone-5">Zone 5: 232 - 264</div>
                   <div class="zone zone-6">Zone 6: 265 - 330</div>
                   <div class="zone zone-7">Zone 7: 331 - 2001</div>
-                </div>
-              </div>
-
-              <!-- Map/Route Content -->
-              <div class="map-content" >
-                <div class="modal-box ">
-                  <h3>Map/Route Section</h3>
-                  <div id="map"></div>
                 </div>
               </div>
 
@@ -212,9 +161,6 @@
 
     <!-- JavaScript Files -->
     <script src="js/data.js"></script>
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-    <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
-    <script src="js/mapAPI.js"></script>
     <script src="js/main.js"></script>
   </body>
 </html>

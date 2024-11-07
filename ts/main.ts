@@ -13,6 +13,9 @@ const $form = document.querySelector('#entry-form') as HTMLFormElement;
 if (!$saveWorkout) throw new Error('$saveWorkout did not query!');
 if (!$form) throw new Error('$form did not query!');
 
+document.addEventListener('DOMContentLoaded', () => {
+  loadWorkouts();
+});
 
 // Save Workout
 const saveWorkout = (e: Event) => {
@@ -26,23 +29,33 @@ const saveWorkout = (e: Event) => {
     duration: {
       hrs: Number(data.get('hours')) || 0,
       mins: Number(data.get('minutes')) || 0,
-      secs: Number(data.get('seconds')) || 0
+      secs: Number(data.get('seconds')) || 0,
     },
     distance: Number(data.get('distance')) || 0,
-    avgSpeed: Number(data.get('avg-speed')) || 0,
-    avgCadence: Number(data.get('avg-cadence')) || 0,
-    avgHR: Number(data.get('avg-HR')) || 0,
-    elevGain: Number(data.get('elevation-gain')) || 0,
     ftp: Number(data.get('ftp-input')) || 220,
     comment: String(data.get('comment')) || '',
   }
 
   addWorkout(newWorkout);
+  loadWorkouts();
   formReset();
   $dialog?.close();
 
   // Check to see if workout saved
   console.log('Workout saved:', newWorkout);
+}
+
+// loadWorkout
+const loadWorkouts = (): void => {
+  const $newEntriesContainer = document.querySelector('.new-entries-container');
+  const $newEntry = getWorkouts();
+
+  $newEntry.forEach((workout) => {
+    const $workout = document.createElement('div');
+    $workout.classList.add('workout-entry');
+    $workout.textContent = `${workout.title}`;
+    $newEntriesContainer?.appendChild($workout);
+  });
 }
 
 
@@ -61,7 +74,6 @@ const formatDate = () => {
 const openModal = () => {
   $modalTitleDate.textContent = formatDate();
   $dialog?.showModal();
-  initializeMap();
 };
 
 const closeModal = () => {
@@ -101,4 +113,3 @@ $openModal?.addEventListener('click', openModal);
 $dismissModal?.addEventListener('click', closeModal);
 $ftpInput.addEventListener('input', ftpInput);
 $saveWorkout.addEventListener('click', saveWorkout);
-
