@@ -3,19 +3,37 @@ const $ftpInput = document.querySelector('.ftp-input');
 const $zoneElements = document.querySelectorAll('.zone');
 const $openModal = document.querySelector('.openTodayModal');
 const $dismissModal = document.querySelector('.dismiss-modal');
-const $dialog = document.querySelector('dialog');
-// workout elements
+const $dialog = document.querySelector('.modal');
 const $saveWorkout = document.querySelector('#save-workout');
 const $form = document.querySelector('#entry-form');
-// Check if valid
+const $modalTitleDate = document.querySelector('.modal__title');
 if (!$saveWorkout)
-    throw new Error('$saveWorkout did not query!');
+    throw new Error('$saveWorkout elements did not query!');
 if (!$form)
     throw new Error('$form did not query!');
-document.addEventListener('DOMContentLoaded', () => {
-    loadWorkouts();
-});
-// Save Workout
+if (!$modalTitleDate)
+    throw new Error('$modalTitleDate did not query!');
+const loadWorkouts = async () => {
+    try {
+        const $newEntriesContainer = document.querySelector('.workout-section__entries');
+        if (!$newEntriesContainer) {
+            console.error('$newEntriesContainer did not query!');
+            return;
+        }
+        $newEntriesContainer.innerHTML = '';
+        const workouts = await getWorkouts();
+        workouts.forEach(workout => {
+            const $workout = document.createElement('div');
+            $workout.classList.add('workout-entry');
+            $workout.textContent = workout.title;
+            $newEntriesContainer?.appendChild($workout);
+        });
+    }
+    catch (err) {
+        console.log('Failed to load data!:', err);
+    }
+};
+document.addEventListener('DOMContentLoaded', loadWorkouts);
 const saveWorkout = (e) => {
     e.preventDefault();
     const data = new FormData($form);
@@ -35,30 +53,12 @@ const saveWorkout = (e) => {
     loadWorkouts();
     formReset();
     $dialog?.close();
-    // Check to see if workout saved
     console.log('Workout saved:', newWorkout);
 };
-// loadWorkout
-const loadWorkouts = () => {
-    const $newEntriesContainer = document.querySelector('.new-entries-container');
-    const $newEntry = getWorkouts();
-    $newEntry.forEach((workout) => {
-        const $workout = document.createElement('div');
-        $workout.classList.add('workout-entry');
-        $workout.textContent = `${workout.title}`;
-        $newEntriesContainer?.appendChild($workout);
-    });
-};
-// Date
-const $modalTitleDate = document.querySelector('.modal-title');
-if (!$modalTitleDate)
-    throw new Error('$modalTitleDate did not query!');
 const formatDate = () => {
     const today = new Date();
-    return today.toDateString(); // Set current date
+    return today.toDateString();
 };
-// Modal
-// Call the function to initialize the map when the modal is opened
 const openModal = () => {
     $modalTitleDate.textContent = formatDate();
     $dialog?.showModal();
@@ -66,26 +66,17 @@ const openModal = () => {
 const closeModal = () => {
     $dialog?.close();
 };
-// FTP Calculation with arrow function
 const ftpInput = () => {
-    try {
-        const ftp = Number($ftpInput.value);
-        // is a valid number?
-        if (!isNaN(ftp) && ftp > 0) {
-            console.log(`FTP Value: ${ftp}`);
-            const zones = calculateZones(ftp); // min, max values
-            // Update the DOM elements with new zone values
-            $zoneElements.forEach((zone, index) => {
-                const { min, max } = zones[index];
-                zone.textContent = `Zone ${index + 1}: ${min} - ${max}`;
-            });
-        }
-        else {
-            throw new Error('Invalid Input. Please enter a valid number greater than zero.');
-        }
+    const ftp = Number($ftpInput.value);
+    if (!isNaN(ftp) && ftp > 0) {
+        const zones = calculateZones(ftp);
+        $zoneElements.forEach((zone, index) => {
+            const { min, max } = zones[index];
+            zone.textContent = `Zone ${index + 1}: ${min} - ${max}`;
+        });
     }
-    catch (error) {
-        console.error(error.message);
+    else {
+        console.error('Invalid FTP input. Please enter a number greater than zero.');
     }
 };
 const formReset = () => {

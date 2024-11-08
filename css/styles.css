@@ -1,17 +1,9 @@
-/* ---------- GENERAL STYLES ---------- */
-
-a {
-  color: white;
-  text-decoration: none;
-  margin-right: 15px;
-}
-
+/* General Styling */
 body {
   font-family: Roboto, sans-serif;
 }
 
-/* ---------- WORKOUT STYLING ---------- */
-
+/* Workout Entry */
 .workout-entry {
   width: 90%;
   height: 50px;
@@ -25,12 +17,10 @@ body {
   font-weight: bold;
 }
 
-/* ---------- MODAL STYLING ---------- */
-
-dialog {
+/* Modal Styling */
+.modal {
   width: 80%;
   max-width: 1000px;
-  height: 100vh;
   padding: 20px;
   background-color: #fff;
   border-radius: 8px;
@@ -42,29 +32,31 @@ dialog {
   transform: translate(-50%, -50%);
 }
 
-dialog::backdrop {
-  background-color: rgba(0, 0, 0, 0.8);
-}
-
-/* Modal Title Styling */
-.modal-title {
+.modal__title {
   font-size: 2.5rem;
   text-align: center;
   margin-bottom: 1.5rem;
   font-weight: bold;
 }
 
-/* Input Section Styling */
-.input-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+.modal__group {
   margin-bottom: 1.5rem;
 }
 
-/* Inputs and Select Styling */
+.modal__group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.time-input {
+  display: flex;
+  gap: 0.5rem;
+}
+
 input[type='text'],
-select {
+input[type='number'],
+textarea {
   width: 100%;
   padding: 0.75rem;
   border: 1px solid #ccc;
@@ -72,45 +64,8 @@ select {
   font-size: 1rem;
 }
 
-#select-input {
-  width: 100%;
-  padding: 10px;
-  border: none;
-  border-bottom: 1px solid #ccc;
-  outline: none;
-  font-size: 1rem;
-}
-
-/* Form Table Styling */
-.form-table {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 0.5rem;
-  margin-top: 1rem;
-}
-
-.form-header {
-  display: contents;
-  font-weight: bold;
-}
-
-.form-row {
-  display: contents;
-}
-
-.form-row label {
-  text-align: left;
-  padding: 0.5rem;
-}
-
-.form-section {
-  background-color: #fafafa;
-  padding: 10px;
-  border-radius: 10px;
-}
-
-/* ---------- MODAL STYLING - Power Zone ---------- */
-.power-zone-container {
+/* Power Zone Section */
+.power-zone {
   margin-top: 20px;
   text-align: center;
   background-color: #f9f9f9;
@@ -119,38 +74,15 @@ select {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-.power-zone-title {
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-
-#ftp-input {
-  width: 100px;
-  padding: 5px;
-  margin: 10px;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-/* Flex Container for All Zones */
-.power-zone {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-/* Individual Zone Styles */
-.zone {
+.power-zone__zones .zone {
   color: white;
   padding: 10px;
   font-size: 1rem;
   font-weight: bold;
   border-radius: 5px;
+  margin-top: 5px;
 }
 
-/* Define colors for each zone */
 .zone-1 {
   background-color: #00B5E2;
 }
@@ -180,11 +112,7 @@ select {
 }
 
 /* Comment Section */
-.comments {
-  margin-top: 2rem;
-}
-
-textarea {
+.comments textarea {
   width: 100%;
   height: 100px;
   padding: 0.75rem;
@@ -193,21 +121,13 @@ textarea {
 }
 
 /* Modal Action Buttons */
-.modal-actions {
+.modal__actions {
   display: flex;
   justify-content: space-between;
   margin-top: 2rem;
 }
 
-button.dismiss-modal {
-  background-color: #f44336;
-}
-
-button.save-modal {
-  background-color: #4caf50;
-}
-
-button {
+.modal__button {
   color: #fff;
   border: none;
   padding: 10px 20px;
@@ -216,10 +136,18 @@ button {
   transition: background-color 0.3s ease;
 }
 
-button:focus {
-  outline: none;
+.modal__button--cancel {
+  background-color: #f44336;
 }
 
-button:hover {
-  opacity: 0.9;
+.modal__button--cancel:hover {
+  background-color: #d32f2f;
+}
+
+.modal__button--save {
+  background-color: #4caf50;
+}
+
+.modal__button--save:hover {
+  background-color: #388e3c;
 }

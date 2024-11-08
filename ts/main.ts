@@ -1,23 +1,38 @@
 const $ftpInput = document.querySelector('.ftp-input') as HTMLInputElement;
-const $zoneElements = document.querySelectorAll(
-  '.zone',
-) as NodeListOf<HTMLElement>;
+const $zoneElements = document.querySelectorAll('.zone') as NodeListOf<HTMLElement>;
 const $openModal = document.querySelector('.openTodayModal');
 const $dismissModal = document.querySelector('.dismiss-modal');
-const $dialog = document.querySelector('dialog');
-// workout elements
+const $dialog = document.querySelector('.modal') as HTMLDialogElement;
 const $saveWorkout = document.querySelector('#save-workout');
 const $form = document.querySelector('#entry-form') as HTMLFormElement;
+const $modalTitleDate = document.querySelector('.modal__title');
 
-// Check if valid
-if (!$saveWorkout) throw new Error('$saveWorkout did not query!');
+if (!$saveWorkout) throw new Error('$saveWorkout elements did not query!');
 if (!$form) throw new Error('$form did not query!');
+if (!$modalTitleDate) throw new Error('$modalTitleDate did not query!')
+if (!$openModal) throw new Error('$openModal did not query!');
 
-document.addEventListener('DOMContentLoaded', () => {
-  loadWorkouts();
-});
+const loadWorkouts = async (): Promise<void> => {
+try {
+  const $newEntriesContainer = document.querySelector('.workout-section__entries');
+  if (!$newEntriesContainer) {
+    console.error('$newEntriesContainer did not query!');
+    return;
+  }
+    const workouts = await getWorkouts();
+    workouts.forEach(workout => {
+      const $workout = document.createElement('div');
+      $workout.classList.add('workout-entry');
+      $workout.textContent = workout.title;
+      $newEntriesContainer.appendChild($workout);
+    });
+  } catch (err) {
+    console.log('Failed to load data!:', err);
+  }
+};
 
-// Save Workout
+document.addEventListener('DOMContentLoaded', loadWorkouts);
+
 const saveWorkout = (e: Event) => {
   e.preventDefault();
 
@@ -34,43 +49,20 @@ const saveWorkout = (e: Event) => {
     distance: Number(data.get('distance')) || 0,
     ftp: Number(data.get('ftp-input')) || 220,
     comment: String(data.get('comment')) || '',
-  }
+  };
 
   addWorkout(newWorkout);
   loadWorkouts();
   formReset();
   $dialog?.close();
-
-  // Check to see if workout saved
   console.log('Workout saved:', newWorkout);
-}
-
-// loadWorkout
-const loadWorkouts = (): void => {
-  const $newEntriesContainer = document.querySelector('.new-entries-container');
-  const $newEntry = getWorkouts();
-
-  $newEntry.forEach((workout) => {
-    const $workout = document.createElement('div');
-    $workout.classList.add('workout-entry');
-    $workout.textContent = `${workout.title}`;
-    $newEntriesContainer?.appendChild($workout);
-  });
-}
-
-
-// Date
-const $modalTitleDate = document.querySelector('.modal-title');
-if (!$modalTitleDate) throw new Error('$modalTitleDate did not query!');
-
-const formatDate = () => {
-  const today = new Date();
-  return today.toDateString(); // Set current date
 };
 
-// Modal
+const formatDate = (): string => {
+  const today = new Date();
+  return today.toDateString();
+};
 
-// Call the function to initialize the map when the modal is opened
 const openModal = () => {
   $modalTitleDate.textContent = formatDate();
   $dialog?.showModal();
@@ -80,34 +72,22 @@ const closeModal = () => {
   $dialog?.close();
 };
 
-// FTP Calculation with arrow function
 const ftpInput = () => {
-  try {
-    const ftp = Number($ftpInput.value);
-
-    // is a valid number?
-    if (!isNaN(ftp) && ftp > 0) {
-      console.log(`FTP Value: ${ftp}`);
-      const zones: ZoneRange[] = calculateZones(ftp); // min, max values
-
-      // Update the DOM elements with new zone values
-      $zoneElements.forEach((zone, index) => {
-        const { min, max } = zones[index];
-        zone.textContent = `Zone ${index + 1}: ${min} - ${max}`;
-      });
-    } else {
-      throw new Error(
-        'Invalid Input. Please enter a valid number greater than zero.',
-      );
-    }
-  } catch (error) {
-    console.error((error as Error).message);
+  const ftp = Number($ftpInput.value);
+  if (!isNaN(ftp) && ftp > 0) {
+    const zones: ZoneRange[] = calculateZones(ftp);
+    $zoneElements.forEach((zone, index) => {
+      const { min, max } = zones[index];
+      zone.textContent = `Zone ${index + 1}: ${min} - ${max}`;
+    });
+  } else {
+    console.error('Invalid FTP input. Please enter a number greater than zero.');
   }
 };
 
 const formReset = () => {
   $form.reset();
-}
+};
 
 $openModal?.addEventListener('click', openModal);
 $dismissModal?.addEventListener('click', closeModal);
