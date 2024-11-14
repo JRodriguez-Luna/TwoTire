@@ -17,10 +17,6 @@
             <div class="header__logo">
                 <img src="/images/Mini-logo-TT.png" alt="TwoTire Mini Logo">
             </div>
-            <nav class="header__nav">
-                <a href="#">Home</a>
-                <a href="#">Workout</a>
-            </nav>
         </div>
     </header>
 
@@ -36,11 +32,9 @@
             <div class="workout-section workout-section--today">
                 <span class="workout-section__title">Today</span>
                 <button class="workout-section__add-button open-today-modal">+</button>
-                <div class="workout-section__entries" id="today-workouts"></div>
-            </div>
-            <div class="workout-section workout-section--tomorrow">
-                <span class="workout-section__title">Tomorrow</span>
-                <button class="workout-section__add-button">+</button>
+                <ul class="workout-section__entries" id="today-workouts">
+                  <!-- New Entries here -->
+                </ul>
             </div>
         </section>
 
@@ -71,7 +65,7 @@
 
                 <div class="modal__group power-zone">
                     <label for="ftp-input">Current FTP:</label>
-                    <input type="number" name="ftp-input" id="ftp-input" class="ftp-input" value="220" min="0">
+                    <input type="number" name="ftp" id="ftp" class="ftp" value="220" min="0">
                     <div class="power-zone__zones">
                         <div class="zone zone-1">Zone 1: 0 - 121</div>
                         <div class="zone zone-2">Zone 2: 122 - 165</div>

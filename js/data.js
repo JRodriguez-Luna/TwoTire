@@ -1,6 +1,20 @@
 "use strict";
 /* exported data */
-let workouts = [];
+// Retrieve workouts from local storage or initialize with default values
+const getWorkouts = () => {
+    const workoutsJSON = localStorage.getItem('workout-storage');
+    if (workoutsJSON) {
+        return JSON.parse(workoutsJSON);
+    }
+    else {
+        return {
+            entries: [],
+            nextEntryId: 1,
+        };
+    }
+};
+const workouts = getWorkouts(); // Load workouts initially
+// Calculate power zones based on FTP
 const calculateZones = (ftp) => {
     return [
         { min: 0, max: Math.round(ftp * 0.55) }, // Zone 1: Recovery (0-55% FTP)
@@ -12,17 +26,15 @@ const calculateZones = (ftp) => {
         { min: Math.round(ftp * 1.5) + 1, max: Infinity }, // Zone 7: Neuromuscular (151%+)
     ];
 };
+// Write the updated workouts to local storage
 const writeWorkouts = () => {
     const workoutsJSON = JSON.stringify(workouts);
-    localStorage.setItem('workout-storage', workoutsJSON); // Use 'workout-storage' for consistency
+    localStorage.setItem('workout-storage', workoutsJSON);
 };
+// Add a new workout to the list
 const addWorkout = (workout) => {
-    workouts.push(workout);
-    writeWorkouts();
-};
-const getWorkouts = () => {
-    const workoutsJSON = localStorage.getItem('workout-storage'); // Matching the key used in writeWorkouts
-    if (workoutsJSON)
-        return JSON.parse(workoutsJSON);
-    return [];
+    workout.entryId = workouts.nextEntryId; // Assign the next available entryId
+    workouts.entries.push(workout); // Add to the entries array
+    workouts.nextEntryId++; // Increment the next entryId
+    writeWorkouts(); // Update local storage
 };

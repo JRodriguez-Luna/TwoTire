@@ -5,8 +5,7 @@ interface ZoneRange {
   max: number;
 }
 
-interface Workout {
-  date: string;
+interface Workouts {
   title: string;
   duration: {
     hrs: number;
@@ -16,10 +15,30 @@ interface Workout {
   distance: number;
   ftp: number;
   comment: string;
+  entryId: number;
 }
 
-let workouts: Workout[] = [];
+interface EntryWorkout {
+  entries: Workouts[];
+  nextEntryId: number;
+}
 
+// Retrieve workouts from local storage or initialize with default values
+const getWorkouts = (): EntryWorkout => {
+  const workoutsJSON = localStorage.getItem('workout-storage');
+  if (workoutsJSON) {
+    return JSON.parse(workoutsJSON);
+  } else {
+    return {
+      entries: [],
+      nextEntryId: 1,
+    };
+  }
+};
+
+const workouts: EntryWorkout = getWorkouts(); // Load workouts initially
+
+// Calculate power zones based on FTP
 const calculateZones = (ftp: number): ZoneRange[] => {
   return [
     { min: 0, max: Math.round(ftp * 0.55) }, // Zone 1: Recovery (0-55% FTP)
@@ -32,19 +51,16 @@ const calculateZones = (ftp: number): ZoneRange[] => {
   ];
 };
 
+// Write the updated workouts to local storage
 const writeWorkouts = (): void => {
   const workoutsJSON = JSON.stringify(workouts);
-  localStorage.setItem('workout-storage', workoutsJSON); // Use 'workout-storage' for consistency
+  localStorage.setItem('workout-storage', workoutsJSON);
 };
 
-const addWorkout = (workout: Workout): void => {
-  workouts.push(workout);
-  writeWorkouts();
-};
-
-const getWorkouts = (): Workout[] => {
-  const workoutsJSON = localStorage.getItem('workout-storage'); // Matching the key used in writeWorkouts
-  if (workoutsJSON) return JSON.parse(workoutsJSON);
-
-  return [];
+// Add a new workout to the list
+const addWorkout = (workout: Workouts): void => {
+  workout.entryId = workouts.nextEntryId; // Assign the next available entryId
+  workouts.entries.push(workout); // Add to the entries array
+  workouts.nextEntryId++; // Increment the next entryId
+  writeWorkouts(); // Update local storage
 };
