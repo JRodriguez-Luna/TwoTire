@@ -159,7 +159,17 @@ const saveWorkout = (e) => {
 };
 const openModal = () => {
   formReset();
+  removeCompletionSection();
+  $saveWorkout.style.display = 'block';
+  $title.textContent = 'Add Workout';
   $dialog?.showModal();
+};
+// remove the completion section
+const removeCompletionSection = () => {
+  const $completedSection = document.querySelector('.modal__group.completed');
+  if ($completedSection) {
+    $completedSection.remove(); // Remove the section if it exists
+  }
 };
 const closeModal = () => {
   $dialog?.close();
