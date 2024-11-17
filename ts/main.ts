@@ -81,11 +81,95 @@ const showWorkoutInModal = (workout: Workouts): void => {
   // Set the modal title
   $title.textContent = `${workout.title}`;
 
+  // Show Completion Section
+  const $completedSection = showCompletedSection();
+  const $formGroup = document.querySelector(
+    '.modal__group.form-section',
+  ) as HTMLElement;
+  if (!$formGroup) throw new Error('$formGroup did not query!');
+  $formGroup.parentNode?.insertBefore(
+    $completedSection,
+    $formGroup.nextSibling,
+  );
+
   // Open the modal
   $dialog?.showModal();
 };
 
 document.addEventListener('DOMContentLoaded', loadWorkouts);
+
+// Add Completion Section
+const showCompletedSection = (): HTMLDivElement => {
+  const inputArray = ['hours', 'minutes', 'seconds'];
+
+  const $modalGroupCompleted = document.createElement('div');
+  $modalGroupCompleted.className = 'modal__group completed';
+
+  const $completedLabel = document.createElement('label');
+  $completedLabel.setAttribute('for', 'completed');
+  $completedLabel.textContent = 'Completion';
+
+  // Duration portion
+  const $durationLabel = document.createElement('label');
+  $durationLabel.setAttribute('for', 'duration-completed');
+  $durationLabel.textContent = 'Duration';
+
+  const $timeInputWrapper = document.createElement('div');
+  $timeInputWrapper.className = 'time-input';
+
+  for (let i = 0; i < inputArray.length; i++) {
+    const $input = document.createElement('input');
+    $input.className = `${inputArray[i]}-completed`;
+    $input.setAttribute('type', 'number');
+    $input.setAttribute('name', `${inputArray[i]}`);
+    $input.setAttribute('min', '0');
+
+    $input.setAttribute(
+      'placeholder',
+      inputArray[i] === 'hours' ? 'hrs' : inputArray[i].slice(0, 3),
+    );
+
+    $input.setAttribute('max', inputArray[i] !== 'hours' ? '59' : '');
+
+    $timeInputWrapper.appendChild($input);
+
+    if (i < inputArray.length - 1) {
+      const $span = document.createElement('span');
+      $span.textContent = ':';
+      $timeInputWrapper.appendChild($span);
+    }
+  }
+
+  // Distance portion
+  const $distanceWrapper = document.createElement('div');
+  $distanceWrapper.className = 'text-input';
+
+  const $distanceLabel = document.createElement('label');
+  $distanceLabel.setAttribute('for', 'distance');
+  $distanceLabel.textContent = 'Distance';
+
+  const $distanceInput = document.createElement('input');
+  $distanceInput.setAttribute('type', 'number');
+  $distanceInput.setAttribute('name', 'distance');
+  $distanceInput.className = 'distance-completed';
+  $distanceInput.setAttribute('placeholder', 'mi');
+  $distanceWrapper.appendChild($distanceInput);
+
+  // Completed Wrap
+  const $completedSectionWrapper = document.createElement('div');
+  $completedSectionWrapper.className = 'completed-section';
+
+  $completedSectionWrapper.append(
+    $durationLabel,
+    $timeInputWrapper,
+    $distanceLabel,
+    $distanceWrapper,
+  );
+
+  $modalGroupCompleted.append($completedLabel, $completedSectionWrapper);
+
+  return $modalGroupCompleted;
+};
 
 const saveWorkout = (e: Event): void => {
   e.preventDefault();
