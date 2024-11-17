@@ -96,6 +96,46 @@
               placeholder="mi" />
           </div>
 
+          <!-- Completion Section -->
+          <div class="modal__group completed">
+            <label for="completed">Completion</label>
+            <div class="completed-section">
+              <label for="duration-completed">Duration</label>
+              <div class="time-input">
+                <input
+                  class="hours-completed"
+                  type="number"
+                  name="hours"
+                  min="0"
+                  placeholder="hrs" />
+                <span>:</span>
+                <input
+                  class="minutes-completed"
+                  type="number"
+                  name="minutes"
+                  min="0"
+                  placeholder="min"
+                  max="59" />
+                <span>:</span>
+                <input
+                  class="seconds-completed"
+                  type="number"
+                  name="seconds"
+                  min="0"
+                  placeholder="sec"
+                  max="59" />
+              </div>
+              <label for="distance">Distance</label>
+              <div class="text-input">
+                <input
+                  type="number"
+                  name="distance"
+                  class="distance-completed"
+                  placeholder="mi" />
+              </div>
+            </div>
+          </div>
+
           <div class="modal__group power-zone">
             <label for="ftp-input">Current FTP:</label>
             <input

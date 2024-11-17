@@ -34,109 +34,10 @@ const loadWorkouts = () => {
   }
 };
 const showWorkoutInModal = (workout) => {
-  const mapping = {
-    title: workout.title,
-    hours: workout.duration.hrs,
-    minutes: workout.duration.mins,
-    seconds: workout.duration.secs,
-    distance: workout.distance,
-    ftp: workout.ftp,
-    comment: workout.comment,
-  };
-  const formElements = $form.elements;
-  // Loop through each form element and set the value if it matches a key in the mapping
-  for (const element of formElements) {
-    if (
-      element instanceof HTMLInputElement ||
-      element instanceof HTMLTextAreaElement
-    ) {
-      const name = element.name;
-      if (Object.hasOwn(mapping, name)) {
-        element.value = mapping[name].toString();
-      }
-    }
-  }
-  // Make form inputs read-only
-  Array.from(formElements).forEach((element) => {
-    if (
-      element instanceof HTMLInputElement ||
-      element instanceof HTMLTextAreaElement
-    ) {
-      element.readOnly = true;
-    }
-  });
-  // Hide the save button since we're in read-only mode
-  $saveWorkout.style.display = 'none';
-  // Set the modal title
-  $title.textContent = `${workout.title}`;
-  // Show Completion Section
-  const $completedSection = showCompletedSection();
-  const $formGroup = document.querySelector('.modal__group.form-section');
-  if (!$formGroup) throw new Error('$formGroup did not query!');
-  $formGroup.parentNode?.insertBefore(
-    $completedSection,
-    $formGroup.nextSibling,
-  );
-  // Open the modal
-  $dialog?.showModal();
+  viewSwap('view', workout); // Switch to view mode with data
+  $dialog?.showModal(); // Open modal
 };
 document.addEventListener('DOMContentLoaded', loadWorkouts);
-// Add Completion Section
-const showCompletedSection = () => {
-  const inputArray = ['hours', 'minutes', 'seconds'];
-  const $modalGroupCompleted = document.createElement('div');
-  $modalGroupCompleted.className = 'modal__group completed';
-  const $completedLabel = document.createElement('label');
-  $completedLabel.setAttribute('for', 'completed');
-  $completedLabel.textContent = 'Completion';
-  // Duration portion
-  const $durationLabel = document.createElement('label');
-  $durationLabel.setAttribute('for', 'duration-completed');
-  $durationLabel.textContent = 'Duration';
-  const $timeInputWrapper = document.createElement('div');
-  $timeInputWrapper.className = 'time-input';
-  for (let i = 0; i < inputArray.length; i++) {
-    const $input = document.createElement('input');
-    $input.className = `${inputArray[i]}-completed`;
-    $input.setAttribute('type', 'number');
-    $input.setAttribute('name', `${inputArray[i]}`);
-    $input.setAttribute('min', '0');
-    $input.setAttribute(
-      'placeholder',
-      inputArray[i] === 'hours' ? 'hrs' : inputArray[i].slice(0, 3),
-    );
-    $input.setAttribute('max', inputArray[i] !== 'hours' ? '59' : '');
-    $timeInputWrapper.appendChild($input);
-    if (i < inputArray.length - 1) {
-      const $span = document.createElement('span');
-      $span.textContent = ':';
-      $timeInputWrapper.appendChild($span);
-    }
-  }
-  // Distance portion
-  const $distanceWrapper = document.createElement('div');
-  $distanceWrapper.className = 'text-input';
-  const $distanceLabel = document.createElement('label');
-  $distanceLabel.setAttribute('for', 'distance');
-  $distanceLabel.textContent = 'Distance';
-  const $distanceInput = document.createElement('input');
-  $distanceInput.setAttribute('type', 'number');
-  $distanceInput.setAttribute('name', 'distance');
-  $distanceInput.className = 'distance-completed';
-  $distanceInput.setAttribute('placeholder', 'mi');
-  $distanceWrapper.appendChild($distanceInput);
-  // Completed Wrap
-  const $completedSectionWrapper = document.createElement('div');
-  $completedSectionWrapper.className = 'completed-section';
-  $completedSectionWrapper.append(
-    $durationLabel,
-    $timeInputWrapper,
-    $distanceLabel,
-    $distanceWrapper,
-  );
-  $modalGroupCompleted.append($completedLabel, $completedSectionWrapper);
-  return $modalGroupCompleted;
-};
 const saveWorkout = (e) => {
   e.preventDefault();
   const data = new FormData($form);
@@ -158,18 +59,8 @@ const saveWorkout = (e) => {
   $dialog?.close(); // Close the modal
 };
 const openModal = () => {
-  formReset();
-  removeCompletionSection();
-  $saveWorkout.style.display = 'block';
-  $title.textContent = 'Add Workout';
-  $dialog?.showModal();
-};
-// remove the completion section
-const removeCompletionSection = () => {
-  const $completedSection = document.querySelector('.modal__group.completed');
-  if ($completedSection) {
-    $completedSection.remove(); // Remove the section if it exists
-  }
+  viewSwap('add'); // Switch to add mode
+  $dialog?.showModal(); // Open modal
 };
 const closeModal = () => {
   $dialog?.close();
@@ -190,6 +81,71 @@ const ftpInput = () => {
 };
 const formReset = () => {
   $form.reset();
+};
+// viewSwap
+const viewSwap = (mode, workout) => {
+  const formElements = $form.elements;
+  const $completedSection = document.querySelector('.modal__group.completed');
+  if (mode === 'view') {
+    // Set fields to readonly and populate data
+    Array.from(formElements).forEach((element) => {
+      if (
+        element instanceof HTMLInputElement ||
+        element instanceof HTMLTextAreaElement
+      ) {
+        element.readOnly = true;
+      }
+    });
+    // Show completed section
+    if ($completedSection) {
+      $completedSection.style.display = 'block';
+    }
+    // Populate form fields with workout data
+    if (workout) {
+      const mapping = {
+        title: workout.title,
+        hours: workout.duration.hrs,
+        minutes: workout.duration.mins,
+        seconds: workout.duration.secs,
+        distance: workout.distance,
+        ftp: workout.ftp,
+        comment: workout.comment,
+      };
+      for (const element of formElements) {
+        if (
+          element instanceof HTMLInputElement ||
+          element instanceof HTMLTextAreaElement
+        ) {
+          const name = element.name;
+          if (Object.hasOwn(mapping, name)) {
+            element.value = mapping[name].toString();
+          }
+        }
+      }
+    }
+    // Hide save button
+    $saveWorkout.style.display = 'none';
+  } else if (mode === 'add') {
+    // Make fields editable
+    Array.from(formElements).forEach((element) => {
+      if (
+        element instanceof HTMLInputElement ||
+        element instanceof HTMLTextAreaElement
+      ) {
+        element.readOnly = false;
+      }
+    });
+    // Hide completed section
+    if ($completedSection) {
+      $completedSection.style.display = 'none';
+    }
+    // Reset form for new entry
+    formReset();
+    // Show save button
+    $saveWorkout.style.display = 'block';
+    // Set title for add mode
+    $title.textContent = 'Add Workout';
+  }
 };
 // Event Listeners
 $openModal?.addEventListener('click', openModal);
