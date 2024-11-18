@@ -146,6 +146,8 @@ const viewSwap = (mode: 'view' | 'add', workout?: Workouts): void => {
       }
     }
 
+    $title.textContent = workout?.title || 'Workout Details';
+
     // Hide save button
     $saveWorkout.style.display = 'none';
   } else if (mode === 'add') {
