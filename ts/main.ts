@@ -29,6 +29,7 @@ const loadWorkouts = (): void => {
     entries.forEach((workout: Workouts) => {
       const $workout = document.createElement('li');
       $workout.classList.add('workout-entry');
+      $workout.setAttribute('data-entry', String(workout.entryId));
       $workout.textContent = `${workout.title}`;
       $newEntriesContainer.appendChild($workout);
 
@@ -62,7 +63,23 @@ const saveWorkout = (e: Event): void => {
     ftp: Number(data.get('ftp')) || 220,
     comment: String(data.get('comment')) || '',
     entryId: 0, // This will be set by the addWorkout function
+    completion: {
+      hrs: Number(data.get('completed-hours')) || 0,
+      mins: Number(data.get('completed-minutes')) || 0,
+      secs: Number(data.get('completed-seconds')) || 0,
+      distance: Number(data.get('completed-distance')) || 0,
+    }
   };
+
+  // Finds the entry
+  const workouts = getWorkouts();
+  const workoutIndex = workouts.entries.findIndex((w) => w.entryId === newWorkout.entryId);
+  if (workoutIndex !== -1) {
+    workouts.entries[workoutIndex] = newWorkout;
+  } else {
+    newWorkout.entryId = workouts.nextEntryId++;
+    workouts.entries.push(newWorkout);
+  }
 
   addWorkout(newWorkout); // Add the new workout to the storage
   loadWorkouts(); // Reload the workouts to display the updated list
@@ -112,7 +129,11 @@ const viewSwap = (mode: 'view' | 'add', workout?: Workouts): void => {
         element instanceof HTMLInputElement ||
         element instanceof HTMLTextAreaElement
       ) {
-        element.readOnly = true;
+        if (element.name.endsWith('-completed')) {
+          element.readOnly = false;
+        } else {
+          element.readOnly = true;
+        }
       }
     });
 
@@ -131,6 +152,10 @@ const viewSwap = (mode: 'view' | 'add', workout?: Workouts): void => {
         distance: workout.distance,
         ftp: workout.ftp,
         comment: workout.comment,
+        'completed-hours': workout.completion?.hrs || '',
+        'completed-minutes': workout.completion?.mins || '',
+        'completed-seconds': workout.completion?.secs || '',
+        'completed-distance': workout.completion?.distance || '',
       };
 
       for (const element of formElements) {
@@ -176,6 +201,7 @@ const viewSwap = (mode: 'view' | 'add', workout?: Workouts): void => {
     $title.textContent = 'Add Workout';
   }
 };
+
 
 // Event Listeners
 $openModal?.addEventListener('click', openModal);

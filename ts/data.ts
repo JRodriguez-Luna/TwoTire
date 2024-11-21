@@ -16,6 +16,12 @@ interface Workouts {
   ftp: number;
   comment: string;
   entryId: number;
+  completion?: {
+    hrs: number;
+    mins: number;
+    secs: number;
+    distance: number;
+  }
 }
 
 interface EntryWorkout {
