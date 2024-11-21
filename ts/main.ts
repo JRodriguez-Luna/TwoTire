@@ -73,7 +73,12 @@ const saveWorkout = (e: Event): void => {
     },
   };
 
-  if (entryId) {
+  if (entryId === 0) {
+    // Add a new workout
+    newWorkout.entryId = workouts.nextEntryId++;
+    workouts.entries.push(newWorkout);
+    console.log(`Added new workout with entryId ${newWorkout.entryId}`);
+  } else {
     // Update existing workout
     const existingWorkoutIndex = workouts.entries.findIndex(
       (workout) => workout.entryId === entryId,
@@ -81,12 +86,9 @@ const saveWorkout = (e: Event): void => {
     if (existingWorkoutIndex !== -1) {
       workouts.entries[existingWorkoutIndex] = newWorkout;
       console.log(`Updated workout with entryId ${entryId}`);
+    } else {
+      console.error(`No workout found with entryId ${entryId} to update.`);
     }
-  } else {
-    // Add new workout
-    newWorkout.entryId = workouts.nextEntryId++;
-    workouts.entries.push(newWorkout);
-    console.log(`Added new workout with entryId ${newWorkout.entryId}`);
   }
 
   writeWorkouts();
@@ -97,9 +99,9 @@ const saveWorkout = (e: Event): void => {
   console.log('Workout saved:', newWorkout);
 };
 
-
 const openModal = (): void => {
   viewSwap('add'); // Switch to add mode
+  $dialog.setAttribute('data-entry', '0');
   $dialog?.showModal(); // Open modal
 };
 
@@ -134,19 +136,44 @@ const viewSwap = (mode: 'view' | 'add', workout?: Workouts): void => {
   ) as HTMLElement;
 
   if (mode === 'view') {
+    $dialog.setAttribute('data-entry', String(workout?.entryId || ''));
+
+    let isCompleted = false;
+
+    if (workout?.completion) {
+      isCompleted =
+        workout.completion?.hrs > 0 ||
+        workout.completion?.mins > 0 ||
+        workout.completion?.secs > 0 ||
+        workout.completion?.distance > 0;
+    }
+
     // Set fields to readonly and populate data
     Array.from(formElements).forEach((element) => {
       if (
         element instanceof HTMLInputElement ||
         element instanceof HTMLTextAreaElement
       ) {
-        if (element.name.endsWith('-completed')) {
-          element.readOnly = false;
-        } else {
-          element.readOnly = true;
-        }
+        element.readOnly = true;
       }
     });
+
+    if (isCompleted) {
+      $completedSection.style.display = 'none';
+      console.log('Completed workout - save button hidden.');
+    } else {
+      Array.from(formElements).forEach((element) => {
+        if (
+          element instanceof HTMLInputElement ||
+          element instanceof HTMLTextAreaElement
+        ) {
+          if (element.name.endsWith('-completed')) {
+            element.readOnly = false;
+          }
+        }
+      });
+      $saveWorkout.style.display = 'block';
+    }
 
     // Show completed section
     if ($completedSection) {
@@ -183,7 +210,6 @@ const viewSwap = (mode: 'view' | 'add', workout?: Workouts): void => {
     }
 
     $title.textContent = workout?.title || 'Workout Details';
-
   } else if (mode === 'add') {
     // Make fields editable
     Array.from(formElements).forEach((element) => {
@@ -192,6 +218,7 @@ const viewSwap = (mode: 'view' | 'add', workout?: Workouts): void => {
         element instanceof HTMLTextAreaElement
       ) {
         element.readOnly = false;
+        element.value = '';
       }
     });
 
@@ -199,6 +226,8 @@ const viewSwap = (mode: 'view' | 'add', workout?: Workouts): void => {
     if ($completedSection) {
       $completedSection.style.display = 'none';
     }
+
+    $dialog.setAttribute('data-entry', '0');
 
     // Reset form for new entry
     formReset();
@@ -210,7 +239,6 @@ const viewSwap = (mode: 'view' | 'add', workout?: Workouts): void => {
     $title.textContent = 'Add Workout';
   }
 };
-
 
 // Event Listeners
 $openModal?.addEventListener('click', openModal);
