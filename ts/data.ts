@@ -65,8 +65,19 @@ const writeWorkouts = (): void => {
 
 // Add a new workout to the list
 const addWorkout = (workout: Workouts): void => {
-  workout.entryId = workouts.nextEntryId; // Assign the next available entryId
-  workouts.entries.push(workout); // Add to the entries array
-  workouts.nextEntryId++; // Increment the next entryId
+  const existingWorkoutIndex = workouts.entries.findIndex(
+    (w) => w.entryId === workout.entryId,
+  );
+
+  if (existingWorkoutIndex !== -1) {
+    // Update existing workout
+    workouts.entries[existingWorkoutIndex] = workout;
+    console.log(`Updated workout with entryId ${workout.entryId}`);
+  } else {
+    // Add new workout
+    workout.entryId = workouts.nextEntryId++;
+    workouts.entries.push(workout);
+    console.log(`Added new workout with entryId ${workout.entryId}`);
+  }
   writeWorkouts(); // Update local storage
 };

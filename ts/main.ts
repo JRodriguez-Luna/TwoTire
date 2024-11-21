@@ -41,6 +41,7 @@ const loadWorkouts = (): void => {
 };
 
 const showWorkoutInModal = (workout: Workouts): void => {
+  $dialog.setAttribute('data-entry', String(workout.entryId));
   viewSwap('view', workout); // Switch to view mode with data
   $dialog?.showModal(); // Open modal
 };
@@ -51,6 +52,7 @@ const saveWorkout = (e: Event): void => {
   e.preventDefault();
 
   const data = new FormData($form);
+  const entryId = Number($dialog.getAttribute('data-entry'));
 
   const newWorkout: Workouts = {
     title: String(data.get('title')),
@@ -62,30 +64,39 @@ const saveWorkout = (e: Event): void => {
     distance: Number(data.get('distance')) || 0,
     ftp: Number(data.get('ftp')) || 220,
     comment: String(data.get('comment')) || '',
-    entryId: 0, // This will be set by the addWorkout function
+    entryId: entryId || 0,
     completion: {
-      hrs: Number(data.get('completed-hours')) || 0,
-      mins: Number(data.get('completed-minutes')) || 0,
-      secs: Number(data.get('completed-seconds')) || 0,
-      distance: Number(data.get('completed-distance')) || 0,
-    }
+      hrs: Number(data.get('hours-completed')) || 0,
+      mins: Number(data.get('minutes-completed')) || 0,
+      secs: Number(data.get('seconds-completed')) || 0,
+      distance: Number(data.get('distance-completed')) || 0,
+    },
   };
 
-  // Finds the entry
-  const workouts = getWorkouts();
-  const workoutIndex = workouts.entries.findIndex((w) => w.entryId === newWorkout.entryId);
-  if (workoutIndex !== -1) {
-    workouts.entries[workoutIndex] = newWorkout;
+  if (entryId) {
+    // Update existing workout
+    const existingWorkoutIndex = workouts.entries.findIndex(
+      (workout) => workout.entryId === entryId,
+    );
+    if (existingWorkoutIndex !== -1) {
+      workouts.entries[existingWorkoutIndex] = newWorkout;
+      console.log(`Updated workout with entryId ${entryId}`);
+    }
   } else {
+    // Add new workout
     newWorkout.entryId = workouts.nextEntryId++;
     workouts.entries.push(newWorkout);
+    console.log(`Added new workout with entryId ${newWorkout.entryId}`);
   }
 
-  addWorkout(newWorkout); // Add the new workout to the storage
-  loadWorkouts(); // Reload the workouts to display the updated list
-  formReset(); // Reset the form fields
-  $dialog?.close(); // Close the modal
+  writeWorkouts();
+  loadWorkouts();
+  formReset();
+  $dialog?.close();
+
+  console.log('Workout saved:', newWorkout);
 };
+
 
 const openModal = (): void => {
   viewSwap('add'); // Switch to add mode
@@ -152,10 +163,10 @@ const viewSwap = (mode: 'view' | 'add', workout?: Workouts): void => {
         distance: workout.distance,
         ftp: workout.ftp,
         comment: workout.comment,
-        'completed-hours': workout.completion?.hrs || '',
-        'completed-minutes': workout.completion?.mins || '',
-        'completed-seconds': workout.completion?.secs || '',
-        'completed-distance': workout.completion?.distance || '',
+        'hours-completed': workout.completion?.hrs || '',
+        'minutes-completed': workout.completion?.mins || '',
+        'seconds-completed': workout.completion?.secs || '',
+        'distance-completed': workout.completion?.distance || '',
       };
 
       for (const element of formElements) {
@@ -173,8 +184,6 @@ const viewSwap = (mode: 'view' | 'add', workout?: Workouts): void => {
 
     $title.textContent = workout?.title || 'Workout Details';
 
-    // Hide save button
-    $saveWorkout.style.display = 'none';
   } else if (mode === 'add') {
     // Make fields editable
     Array.from(formElements).forEach((element) => {
