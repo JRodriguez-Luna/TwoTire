@@ -54,6 +54,12 @@ const saveWorkout = (e: Event): void => {
   const data = new FormData($form);
   const entryId = Number($dialog.getAttribute('data-entry'));
 
+  // Validate inputs
+  if (!data.get('title') || !data.get('hours') || !data.get('distance')) {
+    alert('Please fill out all required fields!');
+    return;
+  }
+
   const newWorkout: Workouts = {
     title: String(data.get('title')),
     duration: {
@@ -89,6 +95,12 @@ const saveWorkout = (e: Event): void => {
     } else {
       console.error(`No workout found with entryId ${entryId} to update.`);
     }
+  }
+
+  // Validate workout object
+  if (!validateWorkout(newWorkout)) {
+    alert('Please provide valid workout data.');
+    return;
   }
 
   writeWorkouts();
@@ -238,6 +250,23 @@ const viewSwap = (mode: 'view' | 'add', workout?: Workouts): void => {
     // Set title for add mode
     $title.textContent = 'Add Workout';
   }
+};
+
+// Validate all updated data
+const validateWorkout = (workout: Workouts): boolean => {
+  if (
+    workout.duration.hrs < 0 ||
+    workout.duration.mins < 0 ||
+    workout.duration.secs < 0
+  ) {
+    console.error('Invalid duration values');
+    return false;
+  }
+  if (workout.distance < 0) {
+    console.error('Invalid distance value');
+    return false;
+  }
+  return true;
 };
 
 // Event Listeners
