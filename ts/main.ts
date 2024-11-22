@@ -33,12 +33,7 @@ const loadWorkouts = (): void => {
       $workout.textContent = `${workout.title}`;
 
       // Check if workout is completed
-      const isCompleted = workout.completion
-        ? workout.completion.hrs > 0 ||
-          workout.completion.mins > 0 ||
-          workout.completion.secs > 0 ||
-          workout.completion.distance > 0
-        : false;
+      const isCompleted = isWorkoutCompleted(workout);
 
       // If complete, change to green
       if (isCompleted) {
@@ -164,12 +159,7 @@ const viewSwap = (mode: 'view' | 'add', workout?: Workouts): void => {
   if (mode === 'view') {
     $dialog.setAttribute('data-entry', String(workout?.entryId || ''));
 
-    const isCompleted = workout?.completion
-      ? workout.completion.hrs > 0 ||
-        workout.completion.mins > 0 ||
-        workout.completion.secs > 0 ||
-        workout.completion.distance > 0
-      : false;
+    const isCompleted = isWorkoutCompleted(workout);
 
     // Set fields to readonly and populate data
     Array.from(formElements).forEach((element) => {
@@ -278,6 +268,16 @@ const validateWorkout = (workout: Workouts): boolean => {
     return false;
   }
   return true;
+};
+
+// Is the workout completed?
+const isWorkoutCompleted = (workout?: Workouts): boolean => {
+  return workout?.completion
+    ? workout?.completion.hrs > 0 ||
+        workout?.completion.mins > 0 ||
+        workout?.completion.secs > 0 ||
+        workout?.completion.distance > 0
+    : false;
 };
 
 // Event Listeners
