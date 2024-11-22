@@ -31,28 +31,23 @@ const loadWorkouts = (): void => {
       $workout.classList.add('workout-entry');
       $workout.setAttribute('data-entry', String(workout.entryId));
       $workout.textContent = `${workout.title}`;
-
-      // Check if workout is completed
-      const isCompleted = isWorkoutCompleted(workout);
-
       // If complete, change to green
-      if (isCompleted) {
+      if (isWorkoutCompleted(workout)) {
         $workout.classList.add('workout-completed');
       }
 
       $newEntriesContainer.appendChild($workout);
-
       $workout.addEventListener('click', () => showWorkoutInModal(workout));
     });
   } catch (err) {
-    console.log('Failed to load data!:', err);
+    alert('Failed to load data!');
   }
 };
 
 const showWorkoutInModal = (workout: Workouts): void => {
   $dialog.setAttribute('data-entry', String(workout.entryId));
-  viewSwap('view', workout); // Switch to view mode with data
-  $dialog?.showModal(); // Open modal
+  viewSwap('view', workout);
+  $dialog?.showModal();
 };
 
 document.addEventListener('DOMContentLoaded', loadWorkouts);
@@ -92,7 +87,6 @@ const saveWorkout = (e: Event): void => {
     // Add a new workout
     newWorkout.entryId = workouts.nextEntryId++;
     workouts.entries.push(newWorkout);
-    console.log(`Added new workout with entryId ${newWorkout.entryId}`);
   } else {
     // Update existing workout
     const existingWorkoutIndex = workouts.entries.findIndex(
@@ -100,7 +94,6 @@ const saveWorkout = (e: Event): void => {
     );
     if (existingWorkoutIndex !== -1) {
       workouts.entries[existingWorkoutIndex] = newWorkout;
-      console.log(`Updated workout with entryId ${entryId}`);
     } else {
       console.error(`No workout found with entryId ${entryId} to update.`);
     }
@@ -115,15 +108,13 @@ const saveWorkout = (e: Event): void => {
   writeWorkouts();
   loadWorkouts();
   formReset();
-  $dialog?.close();
-
-  console.log('Workout saved:', newWorkout);
+  closeModal();
 };
 
 const openModal = (): void => {
-  viewSwap('add'); // Switch to add mode
+  viewSwap('add');
   $dialog.setAttribute('data-entry', '0');
-  $dialog?.showModal(); // Open modal
+  $dialog?.showModal();
 };
 
 const closeModal = (): void => {
@@ -139,9 +130,7 @@ const ftpInput = (): void => {
       zone.textContent = `Zone ${index + 1}: ${min} - ${max}`;
     });
   } else {
-    console.error(
-      'Invalid FTP input. Please enter a number greater than zero.',
-    );
+    alert('Invalid FTP input. Please enter a number greater than zero.');
   }
 };
 
@@ -173,7 +162,6 @@ const viewSwap = (mode: 'view' | 'add', workout?: Workouts): void => {
 
     if (isCompleted) {
       $saveWorkout.style.display = 'none';
-      console.log('Completed workout - save button hidden.');
     } else {
       Array.from(formElements).forEach((element) => {
         if (
@@ -241,15 +229,9 @@ const viewSwap = (mode: 'view' | 'add', workout?: Workouts): void => {
     }
 
     $dialog.setAttribute('data-entry', '0');
-
-    // Reset form for new entry
-    formReset();
-
-    // Show save button
-    $saveWorkout.style.display = 'block';
-
-    // Set title for add mode
-    $title.textContent = 'Add Workout';
+    formReset(); // Reset form for new entry
+    $saveWorkout.style.display = 'block'; // Show save button
+    $title.textContent = 'Add Workout'; // Set title for add mode
   }
 };
 
