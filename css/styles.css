@@ -85,31 +85,31 @@ textarea {
 }
 
 .zone-1 {
-  background-color: #00B5E2;
+  background-color: #00b5e2;
 }
 
 .zone-2 {
-  background-color: #8DC63F;
+  background-color: #8dc63f;
 }
 
 .zone-3 {
-  background-color: #FFD700;
+  background-color: #ffd700;
 }
 
 .zone-4 {
-  background-color: #F68B1F;
+  background-color: #f68b1f;
 }
 
 .zone-5 {
-  background-color: #EE1C25;
+  background-color: #ee1c25;
 }
 
 .zone-6 {
-  background-color: #662D91;
+  background-color: #662d91;
 }
 
 .zone-7 {
-  background-color: #8B0000;
+  background-color: #8b0000;
 }
 
 /* Comment Section */
@@ -153,3 +153,6 @@ textarea {
   background-color: #388e3c;
 }
 
+.workout-completed {
+  background-color: rgb(3, 216, 3) !important;
+}

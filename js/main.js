@@ -27,6 +27,17 @@ const loadWorkouts = () => {
       $workout.classList.add('workout-entry');
       $workout.setAttribute('data-entry', String(workout.entryId));
       $workout.textContent = `${workout.title}`;
+      // Check if workout is completed
+      const isCompleted = workout.completion
+        ? workout.completion.hrs > 0 ||
+          workout.completion.mins > 0 ||
+          workout.completion.secs > 0 ||
+          workout.completion.distance > 0
+        : false;
+      // If complete, change to green
+      if (isCompleted) {
+        $workout.classList.add('workout-completed');
+      }
       $newEntriesContainer.appendChild($workout);
       $workout.addEventListener('click', () => showWorkoutInModal(workout));
     });
@@ -126,14 +137,12 @@ const viewSwap = (mode, workout) => {
   const $completedSection = document.querySelector('.modal__group.completed');
   if (mode === 'view') {
     $dialog.setAttribute('data-entry', String(workout?.entryId || ''));
-    let isCompleted = false;
-    if (workout?.completion) {
-      isCompleted =
-        workout.completion?.hrs > 0 ||
-        workout.completion?.mins > 0 ||
-        workout.completion?.secs > 0 ||
-        workout.completion?.distance > 0;
-    }
+    const isCompleted = workout?.completion
+      ? workout.completion.hrs > 0 ||
+        workout.completion.mins > 0 ||
+        workout.completion.secs > 0 ||
+        workout.completion.distance > 0
+      : false;
     // Set fields to readonly and populate data
     Array.from(formElements).forEach((element) => {
       if (
@@ -144,7 +153,7 @@ const viewSwap = (mode, workout) => {
       }
     });
     if (isCompleted) {
-      $completedSection.style.display = 'none';
+      $saveWorkout.style.display = 'none';
       console.log('Completed workout - save button hidden.');
     } else {
       Array.from(formElements).forEach((element) => {
