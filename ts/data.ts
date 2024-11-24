@@ -27,17 +27,20 @@ interface Workouts {
 interface EntryWorkout {
   entries: Workouts[];
   nextEntryId: number;
+  editEntry?: number | null;
 }
 
 // Retrieve workouts from local storage or initialize with default values
 const getWorkouts = (): EntryWorkout => {
   const workoutsJSON = localStorage.getItem('workout-storage');
   if (workoutsJSON) {
-    return JSON.parse(workoutsJSON);
+    const parsed = JSON.parse(workoutsJSON);
+    return {...parsed, editEntry: null };
   } else {
     return {
       entries: [],
       nextEntryId: 1,
+      editEntry: null,
     };
   }
 };

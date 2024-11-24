@@ -30,14 +30,28 @@ const loadWorkouts = (): void => {
       const $workout = document.createElement('li');
       $workout.classList.add('workout-entry');
       $workout.setAttribute('data-entry', String(workout.entryId));
-      $workout.textContent = `${workout.title}`;
-      // If complete, change to green
+      $workout.innerHTML = `<h3 class="entry-frame">${workout.title} <i class="fa-solid fa-pencil"></i></h3>`;
+
+      // Click to view the workout
+      $workout.addEventListener('click', () => {
+        workouts.editEntry = null;
+        showWorkoutInModal(workout);
+      });
+
+      // Pencil click for editing
+      $workout.querySelector('i')?.addEventListener('click', (e: Event) => {
+        e.stopPropagation();
+        workouts.editEntry = workout.entryId;
+        writeWorkouts();
+        showWorkoutInModal(workout);
+      });
+
+      // Apply green class if workout is completed
       if (isWorkoutCompleted(workout)) {
         $workout.classList.add('workout-completed');
       }
 
       $newEntriesContainer.appendChild($workout);
-      $workout.addEventListener('click', () => showWorkoutInModal(workout));
     });
   } catch (err) {
     alert('Failed to load data!');
@@ -47,22 +61,55 @@ const loadWorkouts = (): void => {
 const showWorkoutInModal = (workout: Workouts): void => {
   $dialog.setAttribute('data-entry', String(workout.entryId));
   viewSwap('view', workout);
+
+  const isEditable = workouts.editEntry === workout.entryId;
+  Array.from($form.elements).forEach((element) => {
+    if (
+      element instanceof HTMLInputElement ||
+      element instanceof HTMLTextAreaElement
+    ) {
+      element.readOnly = !isEditable; // Toggle read-only based on edit mode
+    }
+  });
+
+  toggleCompletedSection(!isEditable); // Hide completed section in edit mode
+  if (!isEditable) enableCompletedSection(); // Ensure completed section is editable in view mode
+
+  $title.textContent = isEditable
+    ? `Edit Workout: ${workout.title}`
+    : `${workout.title}`;
   $dialog?.showModal();
+};
+
+const enableCompletedSection = (): void => {
+  const $completedSection = document.querySelector(
+    '.modal__group.completed',
+  ) as HTMLElement;
+  if ($completedSection) {
+    Array.from($completedSection.querySelectorAll('input')).forEach(
+      (element) => {
+        if (element instanceof HTMLInputElement) element.readOnly = false;
+      },
+    );
+  }
+};
+
+const toggleCompletedSection = (isVisible: boolean): void => {
+  const $completedSection = document.querySelector(
+    '.modal__group.completed',
+  ) as HTMLElement;
+  if ($completedSection) {
+    $completedSection.style.display = isVisible ? 'block' : 'none';
+  }
 };
 
 document.addEventListener('DOMContentLoaded', loadWorkouts);
 
 const saveWorkout = (e: Event): void => {
   e.preventDefault();
-
   const data = new FormData($form);
-  const entryId = Number($dialog.getAttribute('data-entry'));
-
-  // Validate inputs
-  if (!data.get('title') || !data.get('hours') || !data.get('distance')) {
-    alert('Please fill out all required fields!');
-    return;
-  }
+  const entryId =
+    workouts.editEntry ?? Number($dialog.getAttribute('data-entry'));
 
   const newWorkout: Workouts = {
     title: String(data.get('title')),
@@ -74,7 +121,7 @@ const saveWorkout = (e: Event): void => {
     distance: Number(data.get('distance')) || 0,
     ftp: Number(data.get('ftp')) || 220,
     comment: String(data.get('comment')) || '',
-    entryId: entryId || 0,
+    entryId,
     completion: {
       hrs: Number(data.get('hours-completed')) || 0,
       mins: Number(data.get('minutes-completed')) || 0,
@@ -83,28 +130,21 @@ const saveWorkout = (e: Event): void => {
     },
   };
 
-  if (entryId === 0) {
-    // Add a new workout
-    newWorkout.entryId = workouts.nextEntryId++;
-    workouts.entries.push(newWorkout);
-  } else {
-    // Update existing workout
-    const existingWorkoutIndex = workouts.entries.findIndex(
-      (workout) => workout.entryId === entryId,
-    );
-    if (existingWorkoutIndex !== -1) {
-      workouts.entries[existingWorkoutIndex] = newWorkout;
-    } else {
-      console.error(`No workout found with entryId ${entryId} to update.`);
-    }
-  }
-
-  // Validate workout object
   if (!validateWorkout(newWorkout)) {
     alert('Please provide valid workout data.');
     return;
   }
 
+  const index = workouts.entries.findIndex(
+    (workout) => workout.entryId === entryId,
+  );
+  if (index !== -1) {
+    workouts.entries[index] = newWorkout;
+  } else {
+    console.error(`No workout found with entryId ${entryId} to update.`);
+  }
+
+  workouts.editEntry = null; // Reset edit mode
   writeWorkouts();
   loadWorkouts();
   formReset();
@@ -121,37 +161,12 @@ const closeModal = (): void => {
   $dialog?.close();
 };
 
-const ftpInput = (): void => {
-  const ftp = Number($ftpInput.value);
-  if (!isNaN(ftp) && ftp > 0) {
-    const zones: ZoneRange[] = calculateZones(ftp);
-    $zoneElements.forEach((zone, index) => {
-      const { min, max } = zones[index];
-      zone.textContent = `Zone ${index + 1}: ${min} - ${max}`;
-    });
-  } else {
-    alert('Invalid FTP input. Please enter a number greater than zero.');
-  }
-};
+const formReset = (): void => $form.reset();
 
-const formReset = (): void => {
-  $form.reset();
-};
-
-// viewSwap
 const viewSwap = (mode: 'view' | 'add', workout?: Workouts): void => {
-  const formElements = $form.elements;
-  const $completedSection = document.querySelector(
-    '.modal__group.completed',
-  ) as HTMLElement;
-
   if (mode === 'view') {
-    $dialog.setAttribute('data-entry', String(workout?.entryId || ''));
-
     const isCompleted = isWorkoutCompleted(workout);
-
-    // Set fields to readonly and populate data
-    Array.from(formElements).forEach((element) => {
+    Array.from($form.elements).forEach((element) => {
       if (
         element instanceof HTMLInputElement ||
         element instanceof HTMLTextAreaElement
@@ -159,61 +174,12 @@ const viewSwap = (mode: 'view' | 'add', workout?: Workouts): void => {
         element.readOnly = true;
       }
     });
-
-    if (isCompleted) {
-      $saveWorkout.style.display = 'none';
-    } else {
-      Array.from(formElements).forEach((element) => {
-        if (
-          element instanceof HTMLInputElement ||
-          element instanceof HTMLTextAreaElement
-        ) {
-          if (element.name.endsWith('-completed')) {
-            element.readOnly = false;
-          }
-        }
-      });
-      $saveWorkout.style.display = 'block';
-    }
-
-    // Show completed section
-    if ($completedSection) {
-      $completedSection.style.display = 'block';
-    }
-
-    // Populate form fields with workout data
-    if (workout) {
-      const mapping: { [key: string]: any } = {
-        title: workout.title,
-        hours: workout.duration.hrs,
-        minutes: workout.duration.mins,
-        seconds: workout.duration.secs,
-        distance: workout.distance,
-        ftp: workout.ftp,
-        comment: workout.comment,
-        'hours-completed': workout.completion?.hrs || '',
-        'minutes-completed': workout.completion?.mins || '',
-        'seconds-completed': workout.completion?.secs || '',
-        'distance-completed': workout.completion?.distance || '',
-      };
-
-      for (const element of formElements) {
-        if (
-          element instanceof HTMLInputElement ||
-          element instanceof HTMLTextAreaElement
-        ) {
-          const name = element.name;
-          if (Object.hasOwn(mapping, name)) {
-            element.value = mapping[name].toString();
-          }
-        }
-      }
-    }
-
+    $saveWorkout.style.display = isCompleted ? 'none' : 'block';
+    toggleCompletedSection(true);
+    if (workout) populateFormFields(workout);
     $title.textContent = workout?.title || 'Workout Details';
-  } else if (mode === 'add') {
-    // Make fields editable
-    Array.from(formElements).forEach((element) => {
+  } else {
+    Array.from($form.elements).forEach((element) => {
       if (
         element instanceof HTMLInputElement ||
         element instanceof HTMLTextAreaElement
@@ -222,48 +188,67 @@ const viewSwap = (mode: 'view' | 'add', workout?: Workouts): void => {
         element.value = '';
       }
     });
+    toggleCompletedSection(false);
+    formReset();
+    $saveWorkout.style.display = 'block';
+    $title.textContent = 'Add Workout';
+  }
+};
 
-    // Hide completed section
-    if ($completedSection) {
-      $completedSection.style.display = 'none';
+const populateFormFields = (workout: Workouts): void => {
+  const mapping: { [key: string]: any } = {
+    title: workout.title,
+    hours: workout.duration.hrs,
+    minutes: workout.duration.mins,
+    seconds: workout.duration.secs,
+    distance: workout.distance,
+    ftp: workout.ftp,
+    comment: workout.comment,
+    'hours-completed': workout.completion?.hrs || '',
+    'minutes-completed': workout.completion?.mins || '',
+    'seconds-completed': workout.completion?.secs || '',
+    'distance-completed': workout.completion?.distance || '',
+  };
+
+  Array.from($form.elements).forEach((element) => {
+    if (
+      element instanceof HTMLInputElement ||
+      element instanceof HTMLTextAreaElement
+    ) {
+      const name = element.name;
+      if (Object.hasOwn(mapping, name)) {
+        element.value = mapping[name].toString();
+      }
     }
-
-    $dialog.setAttribute('data-entry', '0');
-    formReset(); // Reset form for new entry
-    $saveWorkout.style.display = 'block'; // Show save button
-    $title.textContent = 'Add Workout'; // Set title for add mode
-  }
+  });
 };
 
-// Validate all updated data
-const validateWorkout = (workout: Workouts): boolean => {
-  if (
-    workout.duration.hrs < 0 ||
-    workout.duration.mins < 0 ||
-    workout.duration.secs < 0
-  ) {
-    console.error('Invalid duration values');
-    return false;
-  }
-  if (workout.distance < 0) {
-    console.error('Invalid distance value');
-    return false;
-  }
-  return true;
-};
+const validateWorkout = (workout: Workouts): boolean =>
+  workout.duration.hrs >= 0 &&
+  workout.duration.mins >= 0 &&
+  workout.duration.secs >= 0 &&
+  workout.distance >= 0;
 
-// Is the workout completed?
-const isWorkoutCompleted = (workout?: Workouts): boolean => {
-  return workout?.completion
-    ? workout?.completion.hrs > 0 ||
-        workout?.completion.mins > 0 ||
-        workout?.completion.secs > 0 ||
-        workout?.completion.distance > 0
+const isWorkoutCompleted = (workout?: Workouts): boolean =>
+  workout?.completion
+    ? workout.completion.hrs > 0 ||
+      workout.completion.mins > 0 ||
+      workout.completion.secs > 0 ||
+      workout.completion.distance > 0
     : false;
-};
 
-// Event Listeners
 $openModal?.addEventListener('click', openModal);
 $dismissModal?.addEventListener('click', closeModal);
-$ftpInput.addEventListener('input', ftpInput);
 $saveWorkout.addEventListener('click', saveWorkout);
+$ftpInput.addEventListener('input', () => {
+  const ftp = Number($ftpInput.value);
+  if (ftp > 0) {
+    const zones: ZoneRange[] = calculateZones(ftp);
+    $zoneElements.forEach((zone, index) => {
+      const { min, max } = zones[index];
+      zone.textContent = `Zone ${index + 1}: ${min} - ${max}`;
+    });
+  } else {
+    alert('Invalid FTP input. Please enter a number greater than zero.');
+  }
+});
