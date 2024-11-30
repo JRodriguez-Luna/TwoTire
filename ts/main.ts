@@ -80,7 +80,6 @@ const showWorkoutInModal = (workout: Workouts): void => {
   $dialog?.showModal();
 };
 
-
 const enableCompletedSection = (isEditable: boolean): void => {
   const $completedSection = document.querySelector(
     '.modal__group.completed',
@@ -93,15 +92,6 @@ const enableCompletedSection = (isEditable: boolean): void => {
         }
       },
     );
-  }
-};
-
-const toggleCompletedSection = (isVisible: boolean): void => {
-  const $completedSection = document.querySelector(
-    '.modal__group.completed',
-  ) as HTMLElement;
-  if ($completedSection) {
-    $completedSection.style.display = isVisible ? 'block' : 'none';
   }
 };
 
@@ -247,8 +237,6 @@ const viewSwap = (mode: 'view' | 'edit' | 'add', workout?: Workouts): void => {
     $title.textContent = 'Add Workout';
   }
 };
-
-
 
 const populateFormFields = (workout: Workouts): void => {
   const mapping: { [key: string]: any } = {
