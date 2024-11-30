@@ -51,8 +51,10 @@ const loadWorkouts = (): void => {
           e.stopPropagation(); // Prevent triggering the parent click event
           workouts.editEntry = workout.entryId;
           writeWorkouts();
-          showWorkoutInModal(workout);
+          viewSwap('edit', workout); // Switch to edit mode
+          $dialog?.showModal(); // Show the modal
         });
+
         $titleContainer.appendChild($editIcon); // Append pencil icon
       }
 
@@ -71,35 +73,24 @@ const loadWorkouts = (): void => {
 
 const showWorkoutInModal = (workout: Workouts): void => {
   $dialog.setAttribute('data-entry', String(workout.entryId));
+
+  // Default to view mode when an entry is clicked
   viewSwap('view', workout);
 
-  const isEditable = workouts.editEntry === workout.entryId;
-  Array.from($form.elements).forEach((element) => {
-    if (
-      element instanceof HTMLInputElement ||
-      element instanceof HTMLTextAreaElement
-    ) {
-      element.readOnly = !isEditable; // Toggle read-only based on edit mode
-    }
-  });
-
-  toggleCompletedSection(!isEditable); // Hide completed section in edit mode
-  if (!isEditable) enableCompletedSection(); // Ensure completed section is editable in view mode
-
-  $title.textContent = isEditable
-    ? `Edit Workout: ${workout.title}`
-    : `${workout.title}`;
   $dialog?.showModal();
 };
 
-const enableCompletedSection = (): void => {
+
+const enableCompletedSection = (isEditable: boolean): void => {
   const $completedSection = document.querySelector(
     '.modal__group.completed',
   ) as HTMLElement;
   if ($completedSection) {
     Array.from($completedSection.querySelectorAll('input')).forEach(
       (element) => {
-        if (element instanceof HTMLInputElement) element.readOnly = false;
+        if (element instanceof HTMLInputElement) {
+          element.readOnly = !isEditable; // Toggle read-only based on isEditable
+        }
       },
     );
   }
@@ -179,37 +170,85 @@ const closeModal = (): void => {
 
 const formReset = (): void => $form.reset();
 
-const viewSwap = (mode: 'view' | 'add', workout?: Workouts): void => {
+const viewSwap = (mode: 'view' | 'edit' | 'add', workout?: Workouts): void => {
+  const formElements = Array.from($form.elements);
+  const $completedSection = document.querySelector(
+    '.modal__group.completed',
+  ) as HTMLElement;
+
   if (mode === 'view') {
+    // Determine if the workout is completed
     const isCompleted = isWorkoutCompleted(workout);
-    Array.from($form.elements).forEach((element) => {
+
+    // Make all fields read-only
+    formElements.forEach((element) => {
       if (
         element instanceof HTMLInputElement ||
         element instanceof HTMLTextAreaElement
       ) {
-        element.readOnly = true;
+        element.readOnly = true; // All fields read-only
       }
     });
+
+    // Show completed section and allow editing only if the workout is not completed
+    if ($completedSection) {
+      $completedSection.style.display = 'block';
+      enableCompletedSection(!isCompleted); // Editable only if not completed
+    }
+
+    // Hide the "Save" button for completed workouts
     $saveWorkout.style.display = isCompleted ? 'none' : 'block';
-    toggleCompletedSection(true);
+
+    // Populate the form fields with workout data
     if (workout) populateFormFields(workout);
-    $title.textContent = workout?.title || 'Workout Details';
-  } else {
-    Array.from($form.elements).forEach((element) => {
+
+    // Set modal title
+    $title.textContent = isCompleted
+      ? `${workout?.title} (Completed)`
+      : workout?.title || 'Workout Details';
+  } else if (mode === 'edit') {
+    // Make all fields editable except the completed section
+    formElements.forEach((element) => {
       if (
         element instanceof HTMLInputElement ||
         element instanceof HTMLTextAreaElement
       ) {
-        element.readOnly = false;
-        element.value = '';
+        element.readOnly = false; // Make fields editable
       }
     });
-    toggleCompletedSection(false);
-    formReset();
+
+    // Hide completed section during editing
+    if ($completedSection) $completedSection.style.display = 'none';
+
+    // Show the "Save" button
     $saveWorkout.style.display = 'block';
+
+    // Set modal title for editing
+    $title.textContent = `Edit Workout: ${workout?.title || 'New Workout'}`;
+  } else if (mode === 'add') {
+    // Make all fields editable
+    formElements.forEach((element) => {
+      if (
+        element instanceof HTMLInputElement ||
+        element instanceof HTMLTextAreaElement
+      ) {
+        element.readOnly = false; // All fields editable
+        element.value = ''; // Clear fields
+      }
+    });
+
+    // Hide completed section for new workouts
+    if ($completedSection) $completedSection.style.display = 'none';
+
+    // Set the modal for a new entry
+    $dialog.setAttribute('data-entry', '0');
+    formReset();
+    $saveWorkout.style.display = 'block'; // Show save button
     $title.textContent = 'Add Workout';
   }
 };
+
+
 
 const populateFormFields = (workout: Workouts): void => {
   const mapping: { [key: string]: any } = {
