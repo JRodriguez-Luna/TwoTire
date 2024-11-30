@@ -23,37 +23,48 @@ const loadWorkouts = (): void => {
       console.error('$newEntriesContainer did not query!');
       return;
     }
-    $newEntriesContainer.innerHTML = '';
+    $newEntriesContainer.innerHTML = ''; // Clear previous entries
 
     const { entries } = getWorkouts();
+
     entries.forEach((workout: Workouts) => {
       const $workout = document.createElement('li');
       $workout.classList.add('workout-entry');
       $workout.setAttribute('data-entry', String(workout.entryId));
-      $workout.innerHTML = `<h3 class="entry-frame">${workout.title} <i class="fa-solid fa-pencil"></i></h3>`;
 
-      // Click to view the workout
-      $workout.addEventListener('click', () => {
-        workouts.editEntry = null;
-        showWorkoutInModal(workout);
-      });
+      // Create title and pencil icon container
+      const $titleContainer = document.createElement('h3');
+      $titleContainer.classList.add('entry-frame');
+      $titleContainer.textContent = workout.title;
 
-      // Pencil click for editing
-      $workout.querySelector('i')?.addEventListener('click', (e: Event) => {
-        e.stopPropagation();
-        workouts.editEntry = workout.entryId;
-        writeWorkouts();
-        showWorkoutInModal(workout);
-      });
+      // Add pencil icon for editing
+      const $editIcon = document.createElement('i');
+      $editIcon.classList.add('fa-solid', 'fa-pencil');
 
-      // Apply green class if workout is completed
+      // Check if the workout is completed
       if (isWorkoutCompleted(workout)) {
-        $workout.classList.add('workout-completed');
+        $workout.classList.add('workout-completed'); // Apply green class
+        // Do NOT append the pencil icon if completed
+      } else {
+        // Append the icon and make it functional for non-completed workouts
+        $editIcon.addEventListener('click', (e: Event) => {
+          e.stopPropagation(); // Prevent triggering the parent click event
+          workouts.editEntry = workout.entryId;
+          writeWorkouts();
+          showWorkoutInModal(workout);
+        });
+        $titleContainer.appendChild($editIcon); // Append pencil icon
       }
 
+      // Append title container to the workout
+      $workout.appendChild($titleContainer);
+
+      // Add click event to open the workout modal
+      $workout.addEventListener('click', () => showWorkoutInModal(workout));
       $newEntriesContainer.appendChild($workout);
     });
   } catch (err) {
+    console.error('Error in loadWorkouts:', err);
     alert('Failed to load data!');
   }
 };
@@ -155,14 +166,12 @@ const saveWorkout = (e: Event): void => {
   closeModal();
 };
 
-
 const openModal = (): void => {
   viewSwap('add');
   // Assign the next available entryId for new workouts
   $dialog.setAttribute('data-entry', String(workouts.nextEntryId));
   $dialog?.showModal();
 };
-
 
 const closeModal = (): void => {
   $dialog?.close();
