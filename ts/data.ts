@@ -32,16 +32,19 @@ interface EntryWorkout {
 
 // Retrieve workouts from local storage or initialize with default values
 const getWorkouts = (): EntryWorkout => {
-  const workoutsJSON = localStorage.getItem('workout-storage');
-  if (workoutsJSON) {
-    const parsed = JSON.parse(workoutsJSON);
-    return {...parsed, editEntry: null };
-  } else {
-    return {
-      entries: [],
-      nextEntryId: 1,
-      editEntry: null,
-    };
+  try {
+    const workoutsJSON = localStorage.getItem('workout-storage');
+    if (workoutsJSON) {
+      const parsed = JSON.parse(workoutsJSON);
+      if (Array.isArray(parsed.entries) && typeof parsed.nextEntryId === 'number') {
+        return { ...parsed, editEntry: null };
+      }
+    }
+    // Initialize with default values if no valid data found
+    return { entries: [], nextEntryId: 1, editEntry: null };
+  } catch (err) {
+    console.error('Error parsing workouts from localStorage:', err);
+    return { entries: [], nextEntryId: 1, editEntry: null };
   }
 };
 

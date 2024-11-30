@@ -108,8 +108,7 @@ document.addEventListener('DOMContentLoaded', loadWorkouts);
 const saveWorkout = (e: Event): void => {
   e.preventDefault();
   const data = new FormData($form);
-  const entryId =
-    workouts.editEntry ?? Number($dialog.getAttribute('data-entry'));
+  const entryId = Number($dialog.getAttribute('data-entry'));
 
   const newWorkout: Workouts = {
     title: String(data.get('title')),
@@ -139,7 +138,12 @@ const saveWorkout = (e: Event): void => {
     (workout) => workout.entryId === entryId,
   );
   if (index !== -1) {
+    // Update existing workout
     workouts.entries[index] = newWorkout;
+  } else if (entryId === workouts.nextEntryId) {
+    // Add a new workout
+    workouts.entries.push(newWorkout);
+    workouts.nextEntryId++; // Increment nextEntryId
   } else {
     console.error(`No workout found with entryId ${entryId} to update.`);
   }
@@ -151,11 +155,14 @@ const saveWorkout = (e: Event): void => {
   closeModal();
 };
 
+
 const openModal = (): void => {
   viewSwap('add');
-  $dialog.setAttribute('data-entry', '0');
+  // Assign the next available entryId for new workouts
+  $dialog.setAttribute('data-entry', String(workouts.nextEntryId));
   $dialog?.showModal();
 };
+
 
 const closeModal = (): void => {
   $dialog?.close();
