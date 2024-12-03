@@ -7,6 +7,10 @@ const $dialog = document.querySelector('.modal');
 const $saveWorkout = document.querySelector('#save-workout');
 const $form = document.querySelector('#entry-form');
 const $title = document.querySelector('.modal__title');
+const $deleteModal = document.querySelector('.delete-confirmation-modal');
+const $dismissDeleteModal = document.querySelector('.dismiss-delete-modal');
+const $confirmDeleteModal = document.querySelector('.confirm-delete-modal');
+let entryIdToDelete = null;
 if (!$saveWorkout) throw new Error('$saveWorkout elements did not query!');
 if (!$form) throw new Error('$form did not query!');
 if (!$title) throw new Error('$title did not query!');
@@ -32,6 +36,10 @@ const loadWorkouts = () => {
       // Add trash icon for deleting
       const $deleteIcon = document.createElement('i');
       $deleteIcon.classList.add('fa-solid', 'fa-trash');
+      $deleteIcon.addEventListener('click', (e) => {
+        e.stopPropagation();
+        deleteEntry(workout.entryId);
+      });
       // Create title and pencil icon container
       const $titleContainer = document.createElement('h3');
       $titleContainer.classList.add('entry-frame');
@@ -203,6 +211,33 @@ const viewSwap = (mode, workout) => {
     $saveWorkout.style.display = 'block'; // Show save button
     $title.textContent = 'Add Workout';
   }
+};
+$confirmDeleteModal?.addEventListener('click', () => {
+  if (entryIdToDelete !== null) {
+    const index = workouts.entries.findIndex(
+      (workout) => workout.entryId === entryIdToDelete,
+    );
+    if (index !== -1) {
+      // Remove the workout from the list
+      workouts.entries.splice(index, 1);
+      writeWorkouts(); // Save the updated workouts
+      loadWorkouts(); // Reload the workout list
+    } else {
+      console.error(
+        `No workout found with entryId ${entryIdToDelete} to delete.`,
+      );
+    }
+    entryIdToDelete = null; // Reset the entryIdToDelete
+  }
+  $deleteModal?.close(); // Close the confirmation modal
+});
+$dismissDeleteModal?.addEventListener('click', () => {
+  entryIdToDelete = null; // Reset the entryIdToDelete
+  $deleteModal?.close(); // Close the modal
+});
+const deleteEntry = (entryId) => {
+  entryIdToDelete = entryId; // Store the ID of the workout to delete
+  $deleteModal?.showModal(); // Open the confirmation modal
 };
 const populateFormFields = (workout) => {
   const mapping = {

@@ -27,8 +27,12 @@ body {
 }
 
 i:hover {
-  color: #F5E6BA;
-  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+  color: #f5e6ba;
+  text-shadow:
+    -1px 0 black,
+    0 1px black,
+    1px 0 black,
+    0 -1px black;
 }
 
 /* Modal Styling */
@@ -168,4 +172,58 @@ textarea {
 
 .workout-completed {
   background-color: rgb(3, 216, 3) !important;
+}
+
+/* Trash Icon */
+.entry-frame .fa-trash {
+  margin-right: 10px;
+  cursor: pointer;
+  color: rgb(0, 0, 0);
+}
+
+.entry-frame .fa-trash:hover {
+  color: rgb(255, 0, 0);
+}
+
+/* Delete Modal */
+.delete-confirmation-modal {
+  padding: 20px;
+  border: none;
+  border-radius: 5px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.delete-confirmation-modal .modal__title {
+  font-size: 18px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: center;
+}
+
+.delete-confirmation-modal .modal__actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.delete-confirmation-modal > p {
+  display: flex;
+  justify-content: center;
+}
+
+.delete-confirmation-modal .modal__button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.delete-confirmation-modal .modal__button--cancel {
+  background: #ccc;
+  color: #333;
+}
+
+.delete-confirmation-modal .modal__button--confirm {
+  background: #f44336;
+  color: #fff;
 }
