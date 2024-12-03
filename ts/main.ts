@@ -29,13 +29,23 @@ const loadWorkouts = (): void => {
 
     entries.forEach((workout: Workouts) => {
       const $workout = document.createElement('li');
+
+      // Hold the title
+      const $textContent = document.createElement('h3');
+      $textContent.textContent = workout.title;
+
       $workout.classList.add('workout-entry');
       $workout.setAttribute('data-entry', String(workout.entryId));
+
+      // Add trash icon for deleting
+      const $deleteIcon = document.createElement('i');
+      $deleteIcon.classList.add('fa-solid', 'fa-trash');
 
       // Create title and pencil icon container
       const $titleContainer = document.createElement('h3');
       $titleContainer.classList.add('entry-frame');
-      $titleContainer.textContent = workout.title;
+      $titleContainer.appendChild($deleteIcon);
+      $titleContainer.appendChild($textContent);
 
       // Add pencil icon for editing
       const $editIcon = document.createElement('i');
