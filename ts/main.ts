@@ -8,6 +8,17 @@ const $dialog = document.querySelector('.modal') as HTMLDialogElement;
 const $saveWorkout = document.querySelector('#save-workout') as HTMLElement;
 const $form = document.querySelector('#entry-form') as HTMLFormElement;
 const $title = document.querySelector('.modal__title');
+const $deleteModal = document.querySelector(
+  '.delete-confirmation-modal',
+) as HTMLDialogElement;
+const $dismissDeleteModal = document.querySelector(
+  '.dismiss-delete-modal',
+) as HTMLElement;
+const $confirmDeleteModal = document.querySelector(
+  '.confirm-delete-modal',
+) as HTMLElement;
+
+let entryIdToDelete: number | null = null;
 
 if (!$saveWorkout) throw new Error('$saveWorkout elements did not query!');
 if (!$form) throw new Error('$form did not query!');
@@ -29,13 +40,27 @@ const loadWorkouts = (): void => {
 
     entries.forEach((workout: Workouts) => {
       const $workout = document.createElement('li');
+
+      // Hold the title
+      const $textContent = document.createElement('h3');
+      $textContent.textContent = workout.title;
+
       $workout.classList.add('workout-entry');
       $workout.setAttribute('data-entry', String(workout.entryId));
+
+      // Add trash icon for deleting
+      const $deleteIcon = document.createElement('i');
+      $deleteIcon.classList.add('fa-solid', 'fa-trash');
+      $deleteIcon.addEventListener('click', (e: Event) => {
+        e.stopPropagation();
+        deleteEntry(workout.entryId);
+      });
 
       // Create title and pencil icon container
       const $titleContainer = document.createElement('h3');
       $titleContainer.classList.add('entry-frame');
-      $titleContainer.textContent = workout.title;
+      $titleContainer.appendChild($deleteIcon);
+      $titleContainer.appendChild($textContent);
 
       // Add pencil icon for editing
       const $editIcon = document.createElement('i');
@@ -236,6 +261,39 @@ const viewSwap = (mode: 'view' | 'edit' | 'add', workout?: Workouts): void => {
     $saveWorkout.style.display = 'block'; // Show save button
     $title.textContent = 'Add Workout';
   }
+};
+
+$confirmDeleteModal?.addEventListener('click', () => {
+  if (entryIdToDelete !== null) {
+    const index = workouts.entries.findIndex(
+      (workout) => workout.entryId === entryIdToDelete,
+    );
+
+    if (index !== -1) {
+      // Remove the workout from the list
+      workouts.entries.splice(index, 1);
+      writeWorkouts(); // Save the updated workouts
+      loadWorkouts(); // Reload the workout list
+    } else {
+      console.error(
+        `No workout found with entryId ${entryIdToDelete} to delete.`,
+      );
+    }
+
+    entryIdToDelete = null; // Reset the entryIdToDelete
+  }
+
+  $deleteModal?.close(); // Close the confirmation modal
+});
+
+$dismissDeleteModal?.addEventListener('click', () => {
+  entryIdToDelete = null; // Reset the entryIdToDelete
+  $deleteModal?.close(); // Close the modal
+});
+
+const deleteEntry = (entryId: number): void => {
+  entryIdToDelete = entryId; // Store the ID of the workout to delete
+  $deleteModal?.showModal(); // Open the confirmation modal
 };
 
 const populateFormFields = (workout: Workouts): void => {
